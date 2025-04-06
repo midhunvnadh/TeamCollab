@@ -52,8 +52,36 @@ const getProjectsByUserId = async (userId) => {
   }
 };
 
+const deleteProject = async (projectId) => {
+  try {
+    const result = await query(
+      "DELETE FROM projects WHERE id = $1 RETURNING id",
+      [projectId]
+    );
+    return result.length > 0;
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    return false;
+  }
+};
+
+const editProject = async (projectId, name) => {
+  try {
+    const result = await query(
+      "UPDATE projects SET name = $1 WHERE id = $2 RETURNING id",
+      [name, projectId]
+    );
+    return result.length > 0;
+  } catch (error) {
+    console.error("Error editing project:", error);
+    return false;
+  }
+};
+
 module.exports = {
   createProject,
   assignProject,
   getProjectsByUserId,
+  deleteProject,
+  editProject,
 };

@@ -1,6 +1,9 @@
+const { deleteProject } = require("../../repository/projects");
 const {
   createProjectService,
   getProjectsService,
+  deleteProjectService,
+  editProjectService,
 } = require("../../services/projectService");
 
 const createProjectController = async (req, res) => {
@@ -32,6 +35,44 @@ const getProjectsController = async (req, res) => {
   });
 };
 
+const deleteProjectController = async (req, res) => {
+  const { id: userId } = req.user;
+  const { projectId } = req.params;
+  const c = await deleteProjectService(userId, projectId);
+  if (c.success) {
+    return res.status(200).json({
+      success: true,
+      message: "Project deleted successfully",
+    });
+  }
+  return res.status(500).json({
+    success: false,
+    message: c.message || "Error deleting project",
+  });
+};
+
+const editProjectController = async (req, res) => {
+  const { id: userId } = req.user;
+  const { projectId } = req.params;
+  const { name } = req.body;
+
+  const result = await editProjectService(userId, projectId, name);
+
+  if (result.success) {
+    return res.status(200).json({
+      success: true,
+      message: "Project edited successfully",
+    });
+  }
+  return res.status(500).json({
+    success: false,
+    message: result.message || "Error editing project",
+  });
+};
+
 module.exports = {
   createProjectController,
+  getProjectsController,
+  deleteProjectController,
+  editProjectController,
 };

@@ -19,7 +19,7 @@ signin = async (req, res) => {
       .json({ success: false, message: "Invalid password" });
   }
   const token = jwt.sign({ id: existingUser.id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "3h",
   });
   res.status(200).json({ success: true, token });
 };
