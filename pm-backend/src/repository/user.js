@@ -16,7 +16,13 @@ const getUserByUsername = async (username) => {
   return result?.[0];
 };
 
+const getUserById = async (id) => {
+  const result = await query("SELECT * FROM users WHERE id = $1", [id]);
+  return result?.[0];
+};
+
 module.exports = {
   createUser,
   getUserByUsername,
+  getUserById,
 };
