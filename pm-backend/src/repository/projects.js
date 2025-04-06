@@ -22,7 +22,7 @@ const assignProject = async (projectId, userId, admin = false) => {
       (project_id, user_id, admin)
       VALUES
       ($1, $2, $3)
-      RETURNING *
+      RETURNING id
       `,
       [projectId, userId, admin]
     );
