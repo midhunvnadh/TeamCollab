@@ -21,4 +21,20 @@ const query = async (text, params) => {
   }
 };
 
-module.exports = query;
+const transaction = async (callback) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await callback(client);
+    await client.query("COMMIT");
+    return result;
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error("Transaction failed, rolled back:", err.stack);
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+module.exports = { query, transaction };

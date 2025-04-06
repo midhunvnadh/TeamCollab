@@ -21,7 +21,6 @@ const session = async (req, res, next) => {
       ...decoded,
       id: db_user.id,
       username: db_user.username,
-      admin: db_user.admin,
     };
 
     next();

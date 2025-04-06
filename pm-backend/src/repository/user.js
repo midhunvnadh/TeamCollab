@@ -1,4 +1,4 @@
-const query = require("../lib/db");
+const { query } = require("../lib/db");
 
 const createUser = async (username, password) => {
   const result = await query(
