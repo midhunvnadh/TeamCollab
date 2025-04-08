@@ -20,6 +20,7 @@ const {
   editProject,
   editProjectController,
 } = require("./controllers/projects/project");
+const { createTask, getTasks } = require("./controllers/tasks/tasks");
 
 app.post("/auth/signup", signup);
 app.post("/auth/signin", signin);
@@ -30,6 +31,9 @@ app.put("/projects", createProjectController);
 app.get("/projects", getProjectsController);
 app.delete("/projects/:projectId", deleteProjectController);
 app.patch("/projects/:projectId", editProjectController);
+
+app.get("/projects/:projectId/tasks", getTasks);
+app.put("/projects/:projectId/tasks", createTask);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
