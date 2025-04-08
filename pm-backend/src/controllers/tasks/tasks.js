@@ -5,10 +5,10 @@ const {
 
 const createTask = async (req, res) => {
   try {
-    const { name, assignTo: userId } = req.body;
+    const { name, assignTo: userId, status = 0 } = req.body;
     const { projectId } = req.params;
 
-    const task = await createTaskService(projectId, name, userId);
+    const task = await createTaskService(projectId, name, userId, status);
     if (!task.success) {
       return res.status(400).json({ message: "Failed to create task" });
     }

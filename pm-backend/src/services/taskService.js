@@ -1,8 +1,13 @@
 const { createTask, getTasks } = require("../repository/tasks");
 
-const createTaskService = async (projectId, taskName, assignTo = null) => {
+const createTaskService = async (
+  projectId,
+  taskName,
+  assignTo = null,
+  status = 0
+) => {
   try {
-    const task = await createTask(projectId, taskName, assignTo);
+    const task = await createTask(projectId, taskName, assignTo, status);
     if (task.success) {
       return { success: true, taskId: task.taskId };
     } else {

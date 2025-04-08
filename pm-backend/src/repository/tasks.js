@@ -1,9 +1,9 @@
 const { query } = require("../lib/db");
 
-const createTask = async (projectId, taskName, assignTo = null) => {
+const createTask = async (projectId, taskName, assignTo = nul, status = 0) => {
   const q = await query(
-    `INSERT INTO tasks (title, project_id, assigned_to_user) VALUES ($1, $2, $3) RETURNING id`,
-    [taskName, projectId, assignTo]
+    `INSERT INTO tasks (title, project_id, assigned_to_user, status) VALUES ($1, $2, $3, $4) RETURNING id`,
+    [taskName, projectId, assignTo, status]
   );
   console.log("q:", q);
   const taskId = q[0].id;
