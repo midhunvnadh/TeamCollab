@@ -12,7 +12,7 @@ const SessionProvider = ({ children }) => {
     try {
       const { data } = await request.get("/auth/session");
       if (data.success) {
-        setUser(data);
+        setUser(data?.user);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);

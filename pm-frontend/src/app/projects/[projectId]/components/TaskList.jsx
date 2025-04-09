@@ -1,6 +1,7 @@
 import React from "react";
 import TaskListItem from "./TaskListItem";
 import request from "@/lib/request";
+import { useSession } from "@/lib/context/session";
 
 export default function TaskList({
   listname,
@@ -10,13 +11,16 @@ export default function TaskList({
   refetch,
 }) {
   const [newTask, setNewTask] = React.useState("");
+  const [assignToMe, setAssignToMe] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const { user } = useSession();
 
   const createNewTask = async () => {
     setLoading(true);
     const { data } = await request.put(`/projects/${projectId}/tasks`, {
       name: newTask,
       status: tasksId,
+      assignTo: assignToMe ? user?.id : null,
     });
     if (data) {
       setNewTask("");
@@ -32,7 +36,13 @@ export default function TaskList({
       <div>
         {tasks.length > 0 ? (
           tasks.map((task, index) => (
-            <TaskListItem key={index} task={task} tasksId={tasksId} />
+            <TaskListItem
+              key={index}
+              task={task}
+              tasksId={tasksId}
+              projectId={projectId}
+              refetch={refetch}
+            />
           ))
         ) : (
           <div className=" text-gray-500 text-xs">No tasks available</div>
@@ -53,18 +63,34 @@ export default function TaskList({
             setNewTask(e.target.value);
           }}
         ></textarea>
-        <div>
-          <button
-            className="btn btn-primary btn-xs shadow-none mt-2"
-            onClick={createNewTask}
-            disabled={loading || !newTask}
-          >
-            {loading ? (
-              <span className="loading loading-dots loading-sm"></span>
-            ) : (
-              <span>Create Task</span>
-            )}
-          </button>
+        <div className="flex justify-between items-end">
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-sm"
+              checked={assignToMe}
+              id={`${tasksId}-cb`}
+              onChange={() => {
+                setAssignToMe(!assignToMe);
+              }}
+            />
+            <label htmlFor={`${tasksId}-cb`}>
+              <span className="text-xs">Assign to Me</span>
+            </label>
+          </div>
+          <div>
+            <button
+              className="btn btn-primary btn-xs shadow-none mt-2"
+              onClick={createNewTask}
+              disabled={loading || !newTask}
+            >
+              {loading ? (
+                <span className="loading loading-dots loading-sm"></span>
+              ) : (
+                <span>Create Task</span>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

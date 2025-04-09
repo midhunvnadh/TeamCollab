@@ -49,7 +49,7 @@ export default function page({ params }) {
               tasksId: 2,
             },
           ].map((list, index) => {
-            const ts = tasks.filter((task) => task.status === list.tasksId);
+            const ts = tasks?.filter((task) => task.status === list.tasksId);
             return (
               <div key={index} className="lg:p-0 p-5">
                 <TaskList
