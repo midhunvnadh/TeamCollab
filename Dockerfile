@@ -1,7 +1,9 @@
 FROM node:latest
 
-RUN cd pm-backend && npm i
-RUN cd pm-frontend && npm i && npm run build
+WORKDIR /app
+COPY pm-backend /app
 
-CMD ["bash", "start.sh"]
+RUN cd pm-backend && npm i
+
+CMD ["npm", "start"]
 
