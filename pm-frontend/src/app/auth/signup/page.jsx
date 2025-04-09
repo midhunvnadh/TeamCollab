@@ -68,7 +68,15 @@ export default function signup() {
             />
           </label>
           <div>
-            <button className="btn btn-primary w-full">Sign Up</button>
+            <button
+              className="btn btn-primary w-full"
+              type="submit"
+              disabled={
+                !username || !password || !password_c || password !== password_c
+              }
+            >
+              Sign Up
+            </button>
           </div>
         </form>
         <div className="text-center dark:text-white text-black">
