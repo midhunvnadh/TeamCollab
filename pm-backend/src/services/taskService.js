@@ -3,6 +3,7 @@ const {
   getTasks,
   editTask,
   getTaskById,
+  deleteTask,
 } = require("../repository/tasks");
 
 const createTaskService = async (
@@ -69,9 +70,27 @@ const editTaskService = async (taskId, name, assignTo, status) => {
   }
 };
 
+const deleteTaskService = async (taskId) => {
+  try {
+    const task = await getTaskById(taskId);
+    if (!task) {
+      throw new Error("Task not found");
+    }
+    const result = await deleteTask(taskId);
+    if (result) {
+      return { success: true };
+    } else {
+      throw new Error("Failed to delete task");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createTaskService,
   getTasksService,
   editTaskService,
+  deleteTaskService,
   getTask,
 };

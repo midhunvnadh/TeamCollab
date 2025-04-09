@@ -26,6 +26,7 @@ const {
   getTasks,
   editTask,
   getTaskController,
+  deleteTaskController,
 } = require("./controllers/tasks/tasks");
 const { accessibleProjectsMW } = require("./middlewares/accessibleProjectsMW");
 
@@ -45,6 +46,7 @@ app.get("/projects/:projectId/tasks", getTasks);
 app.put("/projects/:projectId/tasks", createTask);
 app.get("/projects/:projectId/tasks/:taskId", getTaskController);
 app.patch("/projects/:projectId/tasks/:taskId", editTask);
+app.delete("/projects/:projectId/tasks/:taskId", deleteTaskController);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

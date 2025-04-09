@@ -3,6 +3,7 @@ const {
   getTasksService,
   editTaskService,
   getTask,
+  deleteTaskService,
 } = require("../../services/taskService");
 
 const createTask = async (req, res) => {
@@ -69,9 +70,20 @@ const getTaskController = async (req, res) => {
   }
 };
 
+const deleteTaskController = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const task = await deleteTaskService(taskId);
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createTask,
   getTasks,
   editTask,
   getTaskController,
+  deleteTaskController,
 };
