@@ -4,8 +4,12 @@ import { redirect } from "next/navigation";
 
 export default function Home() {
   const { user, loading, error } = useSession();
-  if (!loading && !user) {
-    redirect("/auth/login");
+  if (!loading) {
+    if (user) {
+      redirect("/projects");
+    } else {
+      redirect("/auth/login");
+    }
   }
   return (
     <main>
