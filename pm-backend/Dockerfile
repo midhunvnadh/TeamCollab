@@ -1,9 +1,9 @@
 FROM node:latest
 
 WORKDIR /app
-COPY pm-backend /app
+COPY . /app
 
-RUN cd pm-backend && npm i
+RUN npm i
 
 CMD ["npm", "start"]
 
