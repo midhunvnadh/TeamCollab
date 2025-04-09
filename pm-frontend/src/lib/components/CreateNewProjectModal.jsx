@@ -1,20 +1,22 @@
 import React from "react";
 import request from "../request";
 
-export default function CreateNewProjectModal({ show, hide }) {
+export default function CreateNewProjectModal({ show, hide, refetch }) {
   const submit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
-    console.log(data);
 
-    const { data: rd } = await request.put("/projects", data);
-    if (!rd.success) {
+    const { data: rd } = await request.put("/projects", {
+      name: data.projectName,
+    });
+    if (!rd.projectId) {
       alert("Error creating project");
       return;
     }
 
     hide();
+    refetch();
   };
   return (
     <div>

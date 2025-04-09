@@ -7,21 +7,24 @@ import request from "@/lib/request";
 
 export default function page() {
   const [showModal, setShowModal] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [projects, setProjects] = React.useState([]);
 
   const fetchProjects = async () => {
+    setLoading(true);
     const { data } = await request.get("/projects");
     setProjects(data?.projects || []);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchProjects();
   }, []);
   return (
-    <div className="sticky top-5">
+    <div className="sticky top-5 mt-5">
       <div className="container mx-auto">
         <div className="w-full p-2 bg-base-300 flex items-center justify-between rounded-xl px-2">
-          <div className="">
+          <div className="font-black tracking-wide">
             <h1>Projects</h1>
           </div>
           <div>
@@ -43,10 +46,17 @@ export default function page() {
           hide={() => {
             setShowModal(false);
           }}
+          refetch={fetchProjects}
         />
       </div>
       <div>
-        <ProjectsView projects={projects} />
+        {loading ? (
+          <div className="flex items-center justify-center h-96">
+            <span className="loading loading-dots loading-lg"></span>
+          </div>
+        ) : (
+          <ProjectsView projects={projects} refetch={fetchProjects} />
+        )}
       </div>
     </div>
   );
