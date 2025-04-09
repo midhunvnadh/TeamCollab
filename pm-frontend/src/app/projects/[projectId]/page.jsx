@@ -12,7 +12,6 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
 
 export default function page({ params }) {
   const [tasks, setTasks] = useState([]);

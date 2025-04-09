@@ -49,7 +49,7 @@ export default function page() {
           refetch={fetchProjects}
         />
       </div>
-      <div>
+      <div className="container m-auto py-3">
         {loading ? (
           <div className="flex items-center justify-center h-96">
             <span className="loading loading-dots loading-lg"></span>
