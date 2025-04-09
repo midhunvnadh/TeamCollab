@@ -1,4 +1,9 @@
-const { createTask, getTasks } = require("../repository/tasks");
+const {
+  createTask,
+  getTasks,
+  editTask,
+  getTaskById,
+} = require("../repository/tasks");
 
 const createTaskService = async (
   projectId,
@@ -30,7 +35,43 @@ const getTasksService = async (projectId) => {
   }
 };
 
+const getTask = async (taskId) => {
+  try {
+    const task = await getTaskById(taskId);
+    if (!task) {
+      throw new Error("Task not found");
+    }
+    return task;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const editTaskService = async (taskId, name, assignTo, status) => {
+  try {
+    const t = await getTaskById(taskId);
+    if (!t) {
+      throw new Error("Task not found");
+    }
+    const task = await editTask(
+      taskId,
+      name || t.title,
+      assignTo || t.assigned_to_user,
+      status || t.status
+    );
+    if (task) {
+      return task;
+    } else {
+      throw new Error("Task not found");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createTaskService,
   getTasksService,
+  editTaskService,
+  getTask,
 };

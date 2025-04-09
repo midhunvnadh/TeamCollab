@@ -5,7 +5,6 @@ const createTask = async (projectId, taskName, assignTo = nul, status = 0) => {
     `INSERT INTO tasks (title, project_id, assigned_to_user, status) VALUES ($1, $2, $3, $4) RETURNING id`,
     [taskName, projectId, assignTo, status]
   );
-  console.log("q:", q);
   const taskId = q[0].id;
   if (taskId) {
     return { success: true, taskId };
@@ -15,19 +14,23 @@ const createTask = async (projectId, taskName, assignTo = nul, status = 0) => {
 };
 const getTasks = async (projectId) => {
   const q = await query(
-    `SELECT id, title, assigned_to_user, status, created_at FROM tasks WHERE project_id = $1`,
+    `SELECT id, title, assigned_to_user, status, created_at FROM tasks WHERE project_id = $1 ORDER BY created_at DESC`,
     [projectId]
   );
   return q;
+};
+const getTaskById = async (taskId) => {
+  const q = await query(`SELECT * FROM tasks WHERE id = $1`, [taskId]);
+  return q[0];
 };
 const deleteTask = async (taskId) => {
   const q = await query(`DELETE FROM tasks WHERE id = $1`, [taskId]);
   return q;
 };
-const editTask = async (taskId, taskName, assignTo) => {
+const editTask = async (taskId, taskName, assignTo, status) => {
   const q = await query(
-    `UPDATE tasks SET title = $1, assigned_to_user = $2 WHERE id = $3`,
-    [taskName, assignTo, taskId]
+    `UPDATE tasks SET title = $1, assigned_to_user = $2, status=$3 WHERE id = $4`,
+    [taskName, assignTo, status, taskId]
   );
   return q;
 };
@@ -41,6 +44,7 @@ const editTaskStatus = async (taskId, status) => {
 
 module.exports = {
   createTask,
+  getTaskById,
   getTasks,
   deleteTask,
   editTask,
