@@ -41,12 +41,14 @@ services:
     build:
       context: ./pm-frontend 
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:3001}
     container_name: task-management-frontend
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-3000}:3000" 
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
     depends_on:
       - backend 
     networks:
