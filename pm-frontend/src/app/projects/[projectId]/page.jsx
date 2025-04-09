@@ -2,6 +2,8 @@
 import { use, useEffect, useState } from "react";
 import TaskList from "./components/TaskList";
 import request from "@/lib/request";
+import { PiArrowLeft } from "react-icons/pi";
+import Link from "next/link";
 
 export default function page({ params }) {
   const [tasks, setTasks] = useState([]);
@@ -23,7 +25,12 @@ export default function page({ params }) {
     <div className="min-h-svh">
       <div className="p-2 bg-base-300">
         <div className="w-full">
-          <div>Project</div>
+          <Link href="/projects" className="flex items-center gap-2">
+            <div>
+              <PiArrowLeft />
+            </div>
+            <div>Project</div>
+          </Link>
         </div>
       </div>
       <div className="lg:p-2 p-0 h-[calc(100vh-3rem)] overflow-y-auto lg:w-auto overflow-x-auto">
