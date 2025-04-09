@@ -2,6 +2,11 @@ import React from "react";
 import TaskListItem from "./TaskListItem";
 import request from "@/lib/request";
 import { useSession } from "@/lib/context/session";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core";
 
 export default function TaskList({
   listname,
@@ -14,6 +19,13 @@ export default function TaskList({
   const [assignToMe, setAssignToMe] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const { user } = useSession();
+
+  const { setNodeRef } = useDroppable({
+    id: `droppable-${tasksId}`, // Each droppable area needs a unique ID
+    data: {
+      status: tasksId,
+    },
+  });
 
   const createNewTask = async () => {
     setLoading(true);
@@ -30,27 +42,35 @@ export default function TaskList({
   };
 
   return (
-    <div className="border-2 border-base-300 bg-base-200 rounded-lg p-2 h-full flex flex-col">
+    <div
+      ref={setNodeRef}
+      className="border-2 border-base-300 bg-base-200 rounded-lg p-2 h-full flex flex-col"
+    >
       <div className="text-sm font-bold">{listname || "TaskList"}</div>
       <div className="divider my-0"></div>
-      <div>
-        {tasks.length > 0 ? (
-          tasks.map((task, index) => (
-            <TaskListItem
-              key={index}
-              task={task}
-              tasksId={tasksId}
-              projectId={projectId}
-              refetch={refetch}
-            />
-          ))
-        ) : (
-          <div className=" text-gray-500 text-xs">No tasks available</div>
-        )}
-      </div>
-      <div className="grow">
-        <div className="h-full overflow-auto"></div>
-      </div>
+      <SortableContext
+        items={tasks.map((t) => t.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        <div>
+          {tasks.length > 0 ? (
+            tasks.map((task, index) => (
+              <TaskListItem
+                key={task.id}
+                task={task}
+                tasksId={tasksId}
+                projectId={projectId}
+                refetch={refetch}
+              />
+            ))
+          ) : (
+            <div className=" text-gray-500 text-xs">No tasks available</div>
+          )}
+        </div>
+        <div className="grow">
+          <div className="h-full overflow-auto"></div>
+        </div>
+      </SortableContext>
       <div className="divider my-0"></div>
       <div className="text-end">
         <textarea

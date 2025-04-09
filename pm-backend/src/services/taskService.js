@@ -58,7 +58,7 @@ const editTaskService = async (taskId, name, assignTo, status) => {
       taskId,
       name || t.title,
       assignTo || t.assigned_to_user,
-      status || t.status
+      status === undefined ? t.status : status
     );
     if (task) {
       return task;
