@@ -1,10 +1,12 @@
 "use client";
+import { useSession } from "@/lib/context/session";
 import request from "@/lib/request";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
+  const { refetch } = useSession();
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -14,6 +16,7 @@ export default function Login() {
     const { data: rdata } = await request.post("/auth/signin", data);
     if (rdata.success) {
       localStorage.setItem("token", rdata.token);
+      refetch();
     } else {
       alert(rdata.message);
     }
