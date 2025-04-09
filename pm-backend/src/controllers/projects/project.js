@@ -35,6 +35,21 @@ const getProjectsController = async (req, res) => {
   });
 };
 
+const getProjectController = async (req, res) => {
+  const { id: userId } = req.user;
+  const { projectId } = req.params;
+  const c = await getProjectsService(userId, projectId);
+  if (c.success) {
+    return res.status(200).json({
+      message: "Project fetched successfully",
+      project: c.projects[0],
+    });
+  }
+  return res.status(500).json({
+    message: "Error fetching project",
+  });
+};
+
 const deleteProjectController = async (req, res) => {
   const { id: userId } = req.user;
   const { projectId } = req.params;
@@ -73,6 +88,7 @@ const editProjectController = async (req, res) => {
 module.exports = {
   createProjectController,
   getProjectsController,
+  getProjectController,
   deleteProjectController,
   editProjectController,
 };

@@ -19,6 +19,7 @@ const {
   deleteProjectController,
   editProject,
   editProjectController,
+  getProjectController,
 } = require("./controllers/projects/project");
 const { createTask, getTasks } = require("./controllers/tasks/tasks");
 const { accessibleProjectsMW } = require("./middlewares/accessibleProjectsMW");
@@ -32,6 +33,7 @@ app.put("/projects", createProjectController);
 app.get("/projects", getProjectsController);
 
 app.use("/projects/:projectId/", accessibleProjectsMW);
+app.get("/projects/:projectId", getProjectController);
 app.delete("/projects/:projectId", deleteProjectController);
 app.patch("/projects/:projectId", editProjectController);
 app.get("/projects/:projectId/tasks", getTasks);

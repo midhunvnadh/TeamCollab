@@ -29,9 +29,9 @@ const createProjectService = async (projectName, userId) => {
   }
 };
 
-const getProjectsService = async (userId) => {
+const getProjectsService = async (userId, projectId) => {
   try {
-    const projects = await getProjectsByUserId(userId);
+    const projects = await getProjectsByUserId(userId, projectId);
     if (projects) {
       return { success: true, projects };
     } else {

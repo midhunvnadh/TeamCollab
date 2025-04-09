@@ -34,17 +34,28 @@ const assignProject = async (projectId, userId, admin = false) => {
   }
 };
 
-const getProjectsByUserId = async (userId) => {
+const getProjectsByUserId = async (userId, projectId) => {
   try {
-    const result = await query(
-      `
+    const result = projectId
+      ? await query(
+          `
+      SELECT p.id, p.name
+      FROM projects p
+      JOIN user_projects_access upa ON p.id = upa.project_id
+      WHERE upa.user_id = $1
+      AND p.id = $2
+  `,
+          [userId, projectId]
+        )
+      : await query(
+          `
       SELECT p.id, p.name
       FROM projects p
       JOIN user_projects_access upa ON p.id = upa.project_id
       WHERE upa.user_id = $1
       `,
-      [userId]
-    );
+          [userId]
+        );
     return result;
   } catch (error) {
     console.error("Error getting projects by user ID:", error);
