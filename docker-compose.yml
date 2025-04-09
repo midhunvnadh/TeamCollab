@@ -1,0 +1,57 @@
+
+services:
+  db:
+    image: postgres:15
+    container_name: task-management-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-taskdb}
+      POSTGRES_USER: ${DB_USER:-user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    networks:
+      - task-network
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user} -d ${DB_NAME:-taskdb}"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+  backend:
+    build:
+      context: ./pm-backend
+      dockerfile: Dockerfile
+    container_name: task-management-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-user}:${DB_PASSWORD:-password}@db:5432/${DB_NAME:-taskdb}
+      PORT: 3001
+      JWT_SECRET: "123"
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+    networks:
+      - task-network
+
+  frontend:
+    build:
+      context: ./pm-frontend 
+      dockerfile: Dockerfile
+    container_name: task-management-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000" 
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    depends_on:
+      - backend 
+    networks:
+      - task-network
+
+networks:
+  task-network: 
+    driver: bridge
