@@ -26,34 +26,36 @@ export default function page({ params }) {
           <div>Project</div>
         </div>
       </div>
-      <div className="p-2 grid grid-cols-3 gap-3 h-[calc(100vh-3rem)] overflow-y-auto">
-        {[
-          {
-            name: "To Do",
-            tasksId: 0,
-          },
-          {
-            name: "In Progress",
-            tasksId: 1,
-          },
-          {
-            name: "Done",
-            tasksId: 2,
-          },
-        ].map((list, index) => {
-          const ts = tasks.filter((task) => task.status === list.tasksId);
-          return (
-            <div key={index}>
-              <TaskList
-                listname={list.name}
-                tasks={ts}
-                tasksId={list.tasksId}
-                projectId={projectId}
-                refetch={fetchTasks}
-              />
-            </div>
-          );
-        })}
+      <div className="lg:p-2 p-0 h-[calc(100vh-3rem)] overflow-y-auto lg:w-auto overflow-x-auto">
+        <div className="grid grid-cols-3 grid-rows-1 lg:gap-3 lg:w-full w-[300vw] h-full">
+          {[
+            {
+              name: "To Do",
+              tasksId: 0,
+            },
+            {
+              name: "In Progress",
+              tasksId: 1,
+            },
+            {
+              name: "Done",
+              tasksId: 2,
+            },
+          ].map((list, index) => {
+            const ts = tasks.filter((task) => task.status === list.tasksId);
+            return (
+              <div key={index} className="lg:p-0 p-5">
+                <TaskList
+                  listname={list.name}
+                  tasks={ts}
+                  tasksId={list.tasksId}
+                  projectId={projectId}
+                  refetch={fetchTasks}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

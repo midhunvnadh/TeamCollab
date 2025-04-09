@@ -57,7 +57,7 @@ export default function TaskList({
           <button
             className="btn btn-primary btn-xs shadow-none mt-2"
             onClick={createNewTask}
-            disabled={loading}
+            disabled={loading || !newTask}
           >
             {loading ? (
               <span className="loading loading-dots loading-sm"></span>
