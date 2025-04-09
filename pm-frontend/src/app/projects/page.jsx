@@ -1,7 +1,22 @@
-import React from "react";
+"use client";
+import CreateNewProjectModal from "@/lib/components/CreateNewProjectModal";
+import React, { useEffect } from "react";
 import { FaPlusCircle } from "react-icons/fa";
+import ProjectsView from "./components/ProjectsView";
+import request from "@/lib/request";
 
 export default function page() {
+  const [showModal, setShowModal] = React.useState(false);
+  const [projects, setProjects] = React.useState([]);
+
+  const fetchProjects = async () => {
+    const { data } = await request.get("/projects");
+    setProjects(data?.projects || []);
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
   return (
     <div className="sticky top-5">
       <div className="container mx-auto">
@@ -10,7 +25,10 @@ export default function page() {
             <h1>Projects</h1>
           </div>
           <div>
-            <button className="btn btn-primary btn-xs shadow-none">
+            <button
+              className="btn btn-primary btn-xs shadow-none"
+              onClick={() => setShowModal(true)}
+            >
               <span>
                 <FaPlusCircle className="text-sm" />
               </span>
@@ -18,6 +36,17 @@ export default function page() {
             </button>
           </div>
         </div>
+      </div>
+      <div>
+        <CreateNewProjectModal
+          show={showModal}
+          hide={() => {
+            setShowModal(false);
+          }}
+        />
+      </div>
+      <div>
+        <ProjectsView projects={projects} />
       </div>
     </div>
   );
