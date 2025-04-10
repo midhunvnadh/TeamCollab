@@ -89,10 +89,70 @@ const editProject = async (projectId, name) => {
   }
 };
 
+const projectMembers = async (pid) => {
+  try {
+    const result = await query(
+      `
+      SELECT u.id, u.username
+      FROM users u
+      JOIN user_projects_access upa ON u.id = upa.user_id
+      WHERE upa.project_id = $1
+  `,
+      [pid]
+    );
+    return result;
+  } catch (error) {
+    console.error("Error getting project members:", error);
+    return false;
+  }
+};
+
+const createProjectMember = async (userId, projectId) => {
+  try {
+    const result = await query(
+      `
+      INSERT INTO
+      user_projects_access
+      (project_id, user_id)
+      VALUES
+      ($1, $2)
+      RETURNING id
+      `,
+      [projectId, userId]
+    );
+
+    return result.length > 0;
+  } catch (error) {
+    console.error("Error creating project member:", error);
+    return false;
+  }
+};
+
+const removeProjectMember = async (userid, projectId) => {
+  try {
+    const result = await query(
+      `
+        DELETE FROM user_projects_access
+        WHERE user_id = $1
+        AND project_id = $2
+        RETURNING id
+      `,
+      [userid, projectId]
+    );
+    return result.length > 0;
+  } catch (error) {
+    console.error("Error removing project member:", error);
+    return false;
+  }
+};
+
 module.exports = {
   createProject,
   assignProject,
   getProjectsByUserId,
   deleteProject,
   editProject,
+  projectMembers,
+  createProjectMember,
+  removeProjectMember,
 };
