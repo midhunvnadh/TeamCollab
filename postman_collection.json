@@ -614,6 +614,35 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Notifications",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQ0MzAwMzA3LCJleHAiOjE3NDQzMTExMDd9.bChcT0vYjZx3Aa1ljMxEUj6zqDuqCjql1BSw1pGVcro",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/notifications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"notifications"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

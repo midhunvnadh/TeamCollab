@@ -4,6 +4,7 @@ const {
   editTask,
   getTaskById,
   deleteTask,
+  getTasksByUserId,
 } = require("../repository/tasks");
 
 const createTaskService = async (
@@ -87,10 +88,23 @@ const deleteTaskService = async (taskId) => {
   }
 };
 
+const getLatestUserTasks = async (userId) => {
+  try {
+    const tasks = await getTasksByUserId(userId);
+    if (!tasks) {
+      throw new Error("No tasks found");
+    }
+    return tasks;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createTaskService,
   getTasksService,
   editTaskService,
   deleteTaskService,
   getTask,
+  getLatestUserTasks,
 };

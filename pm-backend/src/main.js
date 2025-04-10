@@ -17,7 +17,6 @@ const {
   createProjectController,
   getProjectsController,
   deleteProjectController,
-  editProject,
   editProjectController,
   getProjectController,
 } = require("./controllers/projects/project");
@@ -35,10 +34,14 @@ const {
   projectMembersRemoveController,
   projectMemberAccessController,
 } = require("./controllers/projects/members");
+const {
+  notificationsController,
+} = require("./controllers/utils/notifications");
 app.post("/auth/signup", signup);
 app.post("/auth/signin", signin);
 
 app.use(sessionMW);
+app.get("/notifications", notificationsController);
 app.get("/auth/session", session);
 app.put("/projects", createProjectController);
 app.get("/projects", getProjectsController);

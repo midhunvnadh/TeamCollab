@@ -46,6 +46,21 @@ const editTaskStatus = async (taskId, status) => {
   return q;
 };
 
+const getTasksByUserId = async (userId) => {
+  const q = await query(
+    `
+    SELECT tasks.created_at, tasks.title, projects.name as project_name, projects.id as project_id
+    FROM tasks
+    JOIN projects ON tasks.project_id = projects.id
+    WHERE assigned_to_user = $1
+    AND status = 0
+    ORDER BY created_at DESC
+  `,
+    [userId]
+  );
+  return q;
+};
+
 module.exports = {
   createTask,
   getTaskById,
@@ -53,4 +68,5 @@ module.exports = {
   deleteTask,
   editTask,
   editTaskStatus,
+  getTasksByUserId,
 };
