@@ -17,6 +17,7 @@ There are a lot of issues, I might have only worked a total of 15 hrs (max) coll
 2. Code: In the repo.
 3. Postman collection: In the repo.
 4. Deployed on Google Cloud Run for the backend and vercel for the frontend.
+5. Works on mobile devices.
 
 # Link
 
