@@ -93,7 +93,7 @@ const projectMembers = async (pid) => {
   try {
     const result = await query(
       `
-      SELECT u.id, u.username
+      SELECT u.id, u.username, upa.admin
       FROM users u
       JOIN user_projects_access upa ON u.id = upa.user_id
       WHERE upa.project_id = $1

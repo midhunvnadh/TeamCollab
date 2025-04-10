@@ -100,6 +100,7 @@ export default function page({ params }) {
       />
       <ViewProjectTeamModal
         show={showProjectTeamModal}
+        projectId={projectDetails?.id}
         hide={() => {
           setShowProjectTeamModal(false);
         }}

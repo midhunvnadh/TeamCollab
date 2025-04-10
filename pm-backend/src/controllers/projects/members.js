@@ -14,11 +14,15 @@ const projectMembersListController = async (req, res) => {
 const projectMembersAddController = async (req, res) => {
   const { projectId } = req.params;
   const { username } = req.body;
-  const add = await addMemberToProject(username, projectId);
-  if (add) {
-    return res.json({ success: true });
+  try {
+    const add = await addMemberToProject(username, projectId);
+    if (add) {
+      return res.json({ success: true });
+    }
+    return res.json({ success: false });
+  } catch (e) {
+    return res.json({ success: false, message: e.message });
   }
-  return res.json({ success: false });
 };
 
 const projectMembersRemoveController = async (req, res) => {
