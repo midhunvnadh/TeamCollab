@@ -14,6 +14,7 @@ export default function TaskList({
   tasksId,
   projectId,
   refetch,
+  members,
 }) {
   const [newTask, setNewTask] = React.useState("");
   const [assignToMe, setAssignToMe] = React.useState(false);
@@ -61,6 +62,7 @@ export default function TaskList({
                 tasksId={tasksId}
                 projectId={projectId}
                 refetch={refetch}
+                members={members}
               />
             ))
           ) : (

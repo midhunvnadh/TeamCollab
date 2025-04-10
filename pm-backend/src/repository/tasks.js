@@ -14,7 +14,11 @@ const createTask = async (projectId, taskName, assignTo = nul, status = 0) => {
 };
 const getTasks = async (projectId) => {
   const q = await query(
-    `SELECT id, title, assigned_to_user, status, created_at FROM tasks WHERE project_id = $1 ORDER BY created_at DESC`,
+    `SELECT tasks.id as id, title, assigned_to_user, status, tasks.created_at, users.username as assigned_to_user_name
+     FROM tasks
+     LEFT JOIN users ON tasks.assigned_to_user = users.id
+     WHERE project_id = $1
+     ORDER BY tasks.created_at DESC`,
     [projectId]
   );
   return q;

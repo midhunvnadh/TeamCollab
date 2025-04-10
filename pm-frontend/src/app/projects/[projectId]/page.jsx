@@ -21,8 +21,16 @@ export default function page({ params }) {
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showProjectTeamModal, setShowProjectTeamModal] = useState(false);
   const [projectDetails, setProjectDetails] = useState(null);
+  const [members, setMembers] = useState([]);
 
   const { projectId } = use(params);
+
+  const fetchMembers = async () => {
+    const { data: members } = await request.get(
+      `/projects/${projectId}/members`
+    );
+    setMembers(members?.members);
+  };
 
   const fetchTasks = async () => {
     const { data: tasks } = await request.get(`/projects/${projectId}/tasks`);
@@ -38,6 +46,7 @@ export default function page({ params }) {
     if (projectId) {
       fetchTasks();
       fetchProjectDetails();
+      fetchMembers();
     }
   }, [projectId]);
 
@@ -101,6 +110,8 @@ export default function page({ params }) {
       <ViewProjectTeamModal
         show={showProjectTeamModal}
         projectId={projectDetails?.id}
+        members={members}
+        fetchMembers={fetchMembers}
         hide={() => {
           setShowProjectTeamModal(false);
         }}
@@ -166,6 +177,7 @@ export default function page({ params }) {
                     tasksId={list.tasksId}
                     projectId={projectId}
                     refetch={fetchTasks}
+                    members={members}
                   />
                 </div>
               );

@@ -2,22 +2,16 @@ import React, { useEffect, useState } from "react";
 import request from "../request";
 import { FaTrash } from "react-icons/fa";
 import { useSession } from "../context/session";
+import { HiMiniXMark } from "react-icons/hi2";
 
 export default function ViewProjectTeamModal({
   show,
   hide,
-  refetch,
+  members,
+  fetchMembers,
   projectId,
 }) {
-  const [members, setMembers] = useState([]);
   const [usernameToInvite, setusernameToInvite] = useState("");
-
-  const fetchMembers = async () => {
-    const { data: members } = await request.get(
-      `/projects/${projectId}/members`
-    );
-    setMembers(members?.members);
-  };
 
   const setAdmin = async (username, admin) => {
     const { data: d } = await request.patch(
@@ -63,11 +57,6 @@ export default function ViewProjectTeamModal({
   };
 
   const { user } = useSession();
-  useEffect(() => {
-    if (projectId && show) {
-      fetchMembers();
-    }
-  }, [projectId, show]);
 
   const isTheLoggedInUserAdmin = members.find(
     (member) => member.username === user?.username
@@ -78,7 +67,19 @@ export default function ViewProjectTeamModal({
       <dialog id="my_modal_4" className={`modal ${show ? "modal-open" : ""}`}>
         <div>
           <div className="modal-box w-md max-w-5xl">
-            <h3 className="font-bold text-lg">Project Members</h3>
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-lg">Project Members</h3>
+              </div>
+              <div>
+                <button
+                  className="btn btn-ghost btn-circle text-xl"
+                  onClick={hide}
+                >
+                  <HiMiniXMark />
+                </button>
+              </div>
+            </div>
             <div className="py-3">
               <div>
                 <table className="table">
@@ -105,7 +106,7 @@ export default function ViewProjectTeamModal({
                                   !isTheLoggedInUserAdmin ||
                                   user.username === member.username
                                 }
-                                checked={member.admin}
+                                defaultChecked={member.admin}
                                 onClick={(e) => {
                                   setAdmin(member.username, e.target.checked);
                                 }}
@@ -156,20 +157,6 @@ export default function ViewProjectTeamModal({
                     </tfoot>
                   )}
                 </table>
-              </div>
-            </div>
-            <div className="modal-action">
-              <div className="space-x-2">
-                <button className="btn btn-success btn-sm" type="submit">
-                  Submit
-                </button>
-                <button
-                  className="btn btn-secondary btn-sm"
-                  type="button"
-                  onClick={hide}
-                >
-                  Close
-                </button>
               </div>
             </div>
           </div>
