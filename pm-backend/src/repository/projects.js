@@ -146,6 +146,26 @@ const removeProjectMember = async (userid, projectId) => {
   }
 };
 
+const projectMemberAccess = async (userid, projectId, admin) => {
+  try {
+    const result = await query(
+      `
+      UPDATE user_projects_access
+      SET admin = $1
+      WHERE user_id = $2
+      AND project_id = $3
+      RETURNING id
+    `,
+      [admin, userid, projectId]
+    );
+    console.log("result", result);
+    return result.length > 0;
+  } catch (error) {
+    console.error("Error updating project member access:", error);
+    return false;
+  }
+};
+
 module.exports = {
   createProject,
   assignProject,
@@ -155,4 +175,5 @@ module.exports = {
   projectMembers,
   createProjectMember,
   removeProjectMember,
+  projectMemberAccess,
 };

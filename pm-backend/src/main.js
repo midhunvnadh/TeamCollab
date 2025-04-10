@@ -33,6 +33,7 @@ const {
   projectMembersListController,
   projectMembersAddController,
   projectMembersRemoveController,
+  projectMemberAccessController,
 } = require("./controllers/projects/members");
 app.post("/auth/signup", signup);
 app.post("/auth/signin", signin);
@@ -49,6 +50,10 @@ app.patch("/projects/:projectId", editProjectController);
 
 app.get("/projects/:projectId/members", projectMembersListController);
 app.put("/projects/:projectId/members", projectMembersAddController);
+app.patch(
+  "/projects/:projectId/members/:username",
+  projectMemberAccessController
+);
 app.delete(
   "/projects/:projectId/members/:username",
   projectMembersRemoveController

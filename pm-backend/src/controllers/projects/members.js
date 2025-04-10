@@ -2,6 +2,7 @@ const {
   projectMembersService,
   addMemberToProject,
   removeMemberFromProject,
+  memberProjectAccessService,
 } = require("../../services/projectMembersService");
 
 const projectMembersListController = async (req, res) => {
@@ -29,8 +30,22 @@ const projectMembersRemoveController = async (req, res) => {
   return res.json({ success: false });
 };
 
+const projectMemberAccessController = async (req, res) => {
+  const { projectId, username } = req.params;
+  const { admin } = req.body;
+  if (admin === undefined) {
+    return res.json({ success: false, message: "admin is required" });
+  }
+  const result = await memberProjectAccessService(username, projectId, admin);
+  if (result) {
+    return res.json({ success: true });
+  }
+  return res.json({ success: false });
+};
+
 module.exports = {
   projectMembersListController,
   projectMembersAddController,
   projectMembersRemoveController,
+  projectMemberAccessController,
 };
