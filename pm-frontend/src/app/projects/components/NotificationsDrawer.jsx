@@ -17,7 +17,7 @@ export default function NotificationsDrawer({ open, close }) {
           id="my-drawer-4"
           type="checkbox"
           className="drawer-toggle"
-          checked={open}
+          defaultChecked={open}
         />
         <div className="drawer-side">
           <label
@@ -29,7 +29,7 @@ export default function NotificationsDrawer({ open, close }) {
             }}
           ></label>
           <div className="menu bg-base-200 text-base-content min-h-full w-80 p-4 space-y-2 overflow-y-auto">
-            {notifications.map((n) => {
+            {notifications?.map((n) => {
               return (
                 <div
                   key={n.id}

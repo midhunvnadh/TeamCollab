@@ -12,7 +12,9 @@ const SessionProvider = ({ children }) => {
     try {
       const { data } = await request.get("/auth/session");
       if (data.success) {
-        setUser(data?.user);
+        setUser(data?.user || null);
+      } else {
+        setUser(null);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -28,8 +30,17 @@ const SessionProvider = ({ children }) => {
 
   const refetch = fetchUser;
 
+  const logout = async () => {
+    try {
+      localStorage.removeItem("token");
+      fetchUser();
+    } catch (error) {
+      console.error("Error logging out");
+    }
+  };
+
   return (
-    <SessionContext.Provider value={{ user, loading, error, refetch }}>
+    <SessionContext.Provider value={{ user, loading, error, refetch, logout }}>
       {children}
     </SessionContext.Provider>
   );

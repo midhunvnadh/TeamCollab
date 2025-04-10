@@ -5,6 +5,8 @@ import { FaBell, FaPlusCircle } from "react-icons/fa";
 import ProjectsView from "./components/ProjectsView";
 import request from "@/lib/request";
 import NotificationsDrawer from "./components/NotificationsDrawer";
+import { CiLogout } from "react-icons/ci";
+import { useSession } from "@/lib/context/session";
 
 export default function page() {
   const [showModal, setShowModal] = React.useState(false);
@@ -19,6 +21,8 @@ export default function page() {
     setLoading(false);
   };
 
+  const { logout } = useSession();
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -30,6 +34,14 @@ export default function page() {
             <h1>Projects</h1>
           </div>
           <div className="flex gap-2">
+            <div>
+              <button
+                onClick={logout}
+                className="btn btn-ghost btn-sm shadow-none btn-circle btn-error"
+              >
+                <CiLogout />
+              </button>
+            </div>
             <div>
               <button
                 className="btn btn-ghost btn-sm shadow-none btn-circle"
