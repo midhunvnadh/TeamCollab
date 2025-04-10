@@ -66,7 +66,7 @@ export default function ViewProjectTeamModal({
     <div>
       <dialog id="my_modal_4" className={`modal ${show ? "modal-open" : ""}`}>
         <div>
-          <div className="modal-box w-md max-w-5xl">
+          <div className="modal-box w-sm lg:w-md max-w-5xl">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-lg">Project Members</h3>

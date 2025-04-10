@@ -11,6 +11,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  TouchSensor,
+  MouseSensor,
 } from "@dnd-kit/core";
 import { FaCog, FaUsers } from "react-icons/fa";
 import ViewProjectModal from "@/lib/components/ViewProjectModal";
@@ -76,8 +78,13 @@ export default function page({ params }) {
   };
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor)
+    // useSensor(PointerSensor),
+    useSensor(KeyboardSensor),
+    useSensor(TouchSensor, {
+      distance: 0,
+      delay: 0,
+    }),
+    useSensor(MouseSensor)
   );
 
   const handleDragEnd = (event) => {

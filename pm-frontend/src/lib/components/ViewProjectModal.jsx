@@ -22,7 +22,7 @@ export default function ViewProjectModal({ show, hide, refetch, project }) {
     <div>
       <dialog id="my_modal_4" className={`modal ${show ? "modal-open" : ""}`}>
         <form action="" onSubmit={submit}>
-          <div className="modal-box w-md max-w-5xl">
+          <div className="modal-box w-sm lg:w-md max-w-5xl">
             <h3 className="font-bold text-lg">Project Details</h3>
             <div className="py-3">
               <div className="form-control w-full">
