@@ -12,9 +12,14 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import { FaCog, FaUsers } from "react-icons/fa";
+import ViewProjectModal from "@/lib/components/ViewProjectModal";
+import ViewProjectTeamModal from "@/lib/components/ViewProjectTeam";
 
 export default function page({ params }) {
   const [tasks, setTasks] = useState([]);
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [showProjectTeamModal, setShowProjectTeamModal] = useState(false);
   const [projectDetails, setProjectDetails] = useState(null);
 
   const { projectId } = use(params);
@@ -78,16 +83,56 @@ export default function page({ params }) {
     }
   };
 
+  const refetch = () => {
+    fetchTasks();
+    fetchProjectDetails();
+  };
+
   return (
     <div className="min-h-svh">
+      <ViewProjectModal
+        show={showProjectModal}
+        project={projectDetails}
+        hide={() => {
+          setShowProjectModal(false);
+        }}
+        refetch={refetch}
+      />
+      <ViewProjectTeamModal
+        show={showProjectTeamModal}
+        hide={() => {
+          setShowProjectTeamModal(false);
+        }}
+        refetch={refetch}
+      />
       <div className="p-2 bg-base-300">
-        <div className="w-full">
-          <Link href="/projects" className="flex items-center gap-2">
-            <div>
-              <PiArrowLeft />
-            </div>
-            <div>{projectDetails?.name || "Loading..."}</div>
-          </Link>
+        <div className="w-full flex justify-between items-center">
+          <div>
+            <Link href="/projects" className="flex items-center gap-2">
+              <div>
+                <PiArrowLeft />
+              </div>
+              <div>{projectDetails?.name || "Loading..."}</div>
+            </Link>
+          </div>
+          <div>
+            <button
+              className="btn btn-ghost btn-circle text-xl"
+              onClick={() => {
+                setShowProjectTeamModal(true);
+              }}
+            >
+              <FaUsers />
+            </button>
+            <button
+              className="btn btn-ghost btn-circle"
+              onClick={() => {
+                setShowProjectModal(true);
+              }}
+            >
+              <FaCog />
+            </button>
+          </div>
         </div>
       </div>
       <div className="lg:p-2 p-0 h-[calc(100vh-3rem)] overflow-y-auto lg:w-auto overflow-x-auto">

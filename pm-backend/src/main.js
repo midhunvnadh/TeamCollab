@@ -29,6 +29,10 @@ const {
   deleteTaskController,
 } = require("./controllers/tasks/tasks");
 const { accessibleProjectsMW } = require("./middlewares/accessibleProjectsMW");
+const {
+  projectMembers,
+  projectMembersController,
+} = require("./controllers/projects/members");
 
 app.post("/auth/signup", signup);
 app.post("/auth/signin", signin);
@@ -42,6 +46,11 @@ app.use("/projects/:projectId/", accessibleProjectsMW);
 app.get("/projects/:projectId", getProjectController);
 app.delete("/projects/:projectId", deleteProjectController);
 app.patch("/projects/:projectId", editProjectController);
+
+app.get("/projects/:projectId/members", projectMembersController);
+app.put("/projects/:projectId/members", getTasks);
+app.delete("/projects/:projectId/members/:memberId", getTasks);
+
 app.get("/projects/:projectId/tasks", getTasks);
 app.put("/projects/:projectId/tasks", createTask);
 app.get("/projects/:projectId/tasks/:taskId", getTaskController);
