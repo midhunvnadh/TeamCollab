@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import request from "../request";
 import { FaTrash } from "react-icons/fa";
+import { useSession } from "../context/session";
 
 export default function ViewProjectTeamModal({
   show,
@@ -61,11 +62,16 @@ export default function ViewProjectTeamModal({
     fetchMembers();
   };
 
+  const { user } = useSession();
   useEffect(() => {
     if (projectId && show) {
       fetchMembers();
     }
   }, [projectId, show]);
+
+  const isTheLoggedInUserAdmin = members.find(
+    (member) => member.username === user?.username
+  )?.admin;
 
   return (
     <div>
@@ -90,10 +96,15 @@ export default function ViewProjectTeamModal({
                         return (
                           <tr key={member.id}>
                             <td>@{member.username}</td>
+
                             <td>
                               <input
                                 type="checkbox"
                                 className="checkbox"
+                                disabled={
+                                  !isTheLoggedInUserAdmin ||
+                                  user.username === member.username
+                                }
                                 checked={member.admin}
                                 onClick={(e) => {
                                   setAdmin(member.username, e.target.checked);
@@ -117,29 +128,33 @@ export default function ViewProjectTeamModal({
                         );
                       })}
                   </tbody>
-                  <tfoot>
-                    <tr>
-                      <td colSpan={2}>
-                        <input
-                          type="text"
-                          name="username"
-                          placeholder="Username"
-                          className="input input-bordered input-sm w-full"
-                          autoComplete="off"
-                          value={usernameToInvite}
-                          onChange={(e) => setusernameToInvite(e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-success btn-sm"
-                          onClick={addNewMember}
-                        >
-                          Invite
-                        </button>
-                      </td>
-                    </tr>
-                  </tfoot>
+                  {isTheLoggedInUserAdmin && (
+                    <tfoot>
+                      <tr>
+                        <td colSpan={2}>
+                          <input
+                            type="text"
+                            name="username"
+                            placeholder="Username"
+                            className="input input-bordered input-sm w-full"
+                            autoComplete="off"
+                            value={usernameToInvite}
+                            onChange={(e) =>
+                              setusernameToInvite(e.target.value)
+                            }
+                          />
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-success btn-sm"
+                            onClick={addNewMember}
+                          >
+                            Invite
+                          </button>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  )}
                 </table>
               </div>
             </div>
