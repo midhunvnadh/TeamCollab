@@ -1,14 +1,16 @@
 "use client";
 import CreateNewProjectModal from "@/lib/components/CreateNewProjectModal";
 import React, { useEffect } from "react";
-import { FaPlusCircle } from "react-icons/fa";
+import { FaBell, FaPlusCircle } from "react-icons/fa";
 import ProjectsView from "./components/ProjectsView";
 import request from "@/lib/request";
+import NotificationsDrawer from "./components/NotificationsDrawer";
 
 export default function page() {
   const [showModal, setShowModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [projects, setProjects] = React.useState([]);
+  const [nd, setNd] = React.useState(false);
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -27,16 +29,28 @@ export default function page() {
           <div className="font-black tracking-wide">
             <h1>Projects</h1>
           </div>
-          <div>
-            <button
-              className="btn btn-primary btn-xs shadow-none"
-              onClick={() => setShowModal(true)}
-            >
-              <span>
-                <FaPlusCircle className="text-sm" />
-              </span>
-              <span>New Project</span>
-            </button>
+          <div className="flex gap-2">
+            <div>
+              <button
+                className="btn btn-ghost btn-sm shadow-none btn-circle"
+                onClick={() => setNd(!nd)}
+              >
+                <span>
+                  <FaBell className="text-sm" />
+                </span>
+              </button>
+            </div>
+            <div>
+              <button
+                className="btn btn-primary btn-sm shadow-none"
+                onClick={() => setShowModal(true)}
+              >
+                <span>
+                  <FaPlusCircle className="text-sm" />
+                </span>
+                <span>New Project</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -58,6 +72,7 @@ export default function page() {
           <ProjectsView projects={projects} refetch={fetchProjects} />
         )}
       </div>
+      <NotificationsDrawer open={nd} close={() => setNd(false)} />
     </div>
   );
 }
