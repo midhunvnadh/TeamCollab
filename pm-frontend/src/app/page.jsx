@@ -12,8 +12,16 @@ export default function Home() {
     }
   }
   return (
-    <main>
-      <h1 className="text-3xl font-bold underline">Welcome!</h1>
+    <main className="w-full h-screen flex items-center justify-center flex-col">
+      <h1 className="text-3xl font-bold">TeamCollab!</h1>
+      <div className="py-2"></div>
+      <div>
+        {loading && (
+          <div>
+            <span className="loading"></span>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
