@@ -154,7 +154,7 @@ export default function page({ params }) {
           </div>
         </div>
       </div>
-      <div className="lg:p-2 p-0 h-[calc(100vh-3rem)] overflow-y-auto lg:w-auto overflow-x-auto">
+      <div className="lg:p-2 p-0 h-[calc(100vh-3.5rem)] overflow-y-auto lg:w-auto overflow-x-auto">
         <div className="grid grid-cols-3 grid-rows-1 lg:gap-3 lg:w-full w-[300vw] h-full">
           <DndContext
             collisionDetection={closestCenter}

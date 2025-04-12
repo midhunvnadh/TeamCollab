@@ -49,7 +49,7 @@ export default function TaskList({
     >
       <div className="text-sm font-bold">{listname || "TaskList"}</div>
       <div className="divider my-0"></div>
-      <div className="grow overflow-y-scroll">
+      <div className="grow overflow-visible">
         <SortableContext
           items={tasks.map((t) => t.id)}
           strategy={verticalListSortingStrategy}
