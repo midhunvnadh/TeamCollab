@@ -10,7 +10,7 @@ export function TaskProvider({ children, projectId }) {
   const fetchTasks = useCallback(async () => {
     try {
       const { data: tasks } = await request.get(`/projects/${projectId}/tasks`);
-      setTasks(tasks);
+      setTasks(tasks?.tasks || []);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }

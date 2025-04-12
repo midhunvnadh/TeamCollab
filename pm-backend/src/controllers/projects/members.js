@@ -7,44 +7,108 @@ const {
 
 const projectMembersListController = async (req, res) => {
   const { projectId } = req.params;
-  const members = await projectMembersService(projectId);
-  return res.json({ members });
+
+  if (!projectId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Project ID is required" });
+  }
+
+  try {
+    const members = await projectMembersService(projectId);
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: "Members fetched successfully",
+        members,
+      });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 const projectMembersAddController = async (req, res) => {
   const { projectId } = req.params;
   const { username } = req.body;
+
+  if (!projectId || !username) {
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Project ID and username are required",
+      });
+  }
+
   try {
     const add = await addMemberToProject(username, projectId);
     if (add) {
-      return res.json({ success: true });
+      return res
+        .status(200)
+        .json({ success: true, message: "Member added successfully" });
     }
-    return res.json({ success: false });
-  } catch (e) {
-    return res.json({ success: false, message: e.message });
+    return res
+      .status(400)
+      .json({ success: false, message: "Failed to add member" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
 const projectMembersRemoveController = async (req, res) => {
   const { projectId, username } = req.params;
-  const remove = await removeMemberFromProject(username, projectId);
-  if (remove) {
-    return res.json({ success: true });
+
+  if (!projectId || !username) {
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Project ID and username are required",
+      });
   }
-  return res.json({ success: false });
+
+  try {
+    const remove = await removeMemberFromProject(username, projectId);
+    if (remove) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Member removed successfully" });
+    }
+    return res
+      .status(404)
+      .json({ success: false, message: "Member not found" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 const projectMemberAccessController = async (req, res) => {
   const { projectId, username } = req.params;
   const { admin } = req.body;
-  if (admin === undefined) {
-    return res.json({ success: false, message: "admin is required" });
+
+  if (!projectId || !username || admin === undefined) {
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Project ID, username, and admin status are required",
+      });
   }
-  const result = await memberProjectAccessService(username, projectId, admin);
-  if (result) {
-    return res.json({ success: true });
+
+  try {
+    const result = await memberProjectAccessService(username, projectId, admin);
+    if (result) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Member access updated successfully" });
+    }
+    return res
+      .status(404)
+      .json({ success: false, message: "Member not found" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
-  return res.json({ success: false });
 };
 
 module.exports = {

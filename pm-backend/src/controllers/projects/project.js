@@ -9,61 +9,94 @@ const {
 const createProjectController = async (req, res) => {
   const { name } = req.body;
   const { id: userId } = req.user;
-  const c = await createProjectService(name, userId);
-  if (c.success) {
-    return res.status(201).json({
-      message: "Project created successfully",
-      projectId: c.projectId,
-    });
+
+  if (!name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Project name is required" });
   }
-  return res.status(500).json({
-    message: "Error creating project",
-  });
+
+  try {
+    const c = await createProjectService(name, userId);
+    if (c.success) {
+      return res
+        .status(201)
+        .json({
+          success: true,
+          message: "Project created successfully",
+          projectId: c.projectId,
+        });
+    }
+    return res
+      .status(500)
+      .json({ success: false, message: "Error creating project" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 const getProjectsController = async (req, res) => {
   const { id: userId } = req.user;
-  const c = await getProjectsService(userId);
-  if (c.success) {
-    return res.status(200).json({
-      message: "Projects fetched successfully",
-      projects: c.projects,
-    });
+
+  try {
+    const c = await getProjectsService(userId);
+    if (c.success) {
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "Projects fetched successfully",
+          projects: c.projects,
+        });
+    }
+    return res
+      .status(404)
+      .json({ success: false, message: "No projects found" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
-  return res.status(500).json({
-    message: "Error fetching projects",
-  });
 };
 
 const getProjectController = async (req, res) => {
   const { id: userId } = req.user;
   const { projectId } = req.params;
-  const c = await getProjectsService(userId, projectId);
-  if (c.success) {
-    return res.status(200).json({
-      message: "Project fetched successfully",
-      project: c.projects[0],
-    });
+
+  try {
+    const c = await getProjectsService(userId, projectId);
+    if (c.success) {
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "Project fetched successfully",
+          project: c.projects[0],
+        });
+    }
+    return res
+      .status(404)
+      .json({ success: false, message: "Project not found" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
-  return res.status(404).json({
-    message: "Project not found",
-  });
 };
 
 const deleteProjectController = async (req, res) => {
   const { id: userId } = req.user;
   const { projectId } = req.params;
-  const c = await deleteProjectService(userId, projectId);
-  if (c.success) {
-    return res.status(200).json({
-      success: true,
-      message: "Project deleted successfully",
-    });
+
+  try {
+    const c = await deleteProjectService(userId, projectId);
+    if (c.success) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Project deleted successfully" });
+    }
+    return res
+      .status(404)
+      .json({ success: false, message: "Project not found" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
-  return res.status(404).json({
-    success: false,
-    message: c.message || "Project not found",
-  });
 };
 
 const editProjectController = async (req, res) => {
@@ -71,18 +104,25 @@ const editProjectController = async (req, res) => {
   const { projectId } = req.params;
   const { name } = req.body;
 
-  const result = await editProjectService(userId, projectId, name);
-
-  if (result.success) {
-    return res.status(200).json({
-      success: true,
-      message: "Project edited successfully",
-    });
+  if (!name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Project name is required" });
   }
-  return res.status(404).json({
-    success: false,
-    message: result.message || "Project not found",
-  });
+
+  try {
+    const result = await editProjectService(userId, projectId, name);
+    if (result.success) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Project edited successfully" });
+    }
+    return res
+      .status(404)
+      .json({ success: false, message: "Project not found" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 module.exports = {

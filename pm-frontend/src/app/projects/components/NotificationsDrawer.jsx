@@ -5,7 +5,7 @@ export default function NotificationsDrawer({ open, close }) {
   const [notifications, setNotifications] = React.useState([]);
   const fetchNotifications = async () => {
     const { data } = await request.get("/notifications");
-    setNotifications(data);
+    setNotifications(data?.notifications || []);
   };
   React.useEffect(() => {
     fetchNotifications();

@@ -6,15 +6,21 @@ const signup = async (req, res) => {
   if (!username || !password) {
     return res
       .status(400)
-      .json({ success: false, error: "Name and password are required" });
+      .json({ success: false, message: "Name and password are required" });
   }
 
-  const result = await createUserService({ username, password });
+  try {
+    const result = await createUserService({ username, password });
 
-  if (result.success) {
-    return res.status(201).json({ success: true, message: result.message });
+    if (result.success) {
+      return res
+        .status(201)
+        .json({ success: true, message: "User created successfully" });
+    }
+    return res.status(400).json({ success: false, message: result.message });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
-  return res.status(400).json({ success: false, message: result.message });
 };
 
 module.exports = { signup };

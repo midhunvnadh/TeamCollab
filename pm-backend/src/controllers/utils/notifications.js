@@ -2,10 +2,28 @@ const { getLatestUserTasks } = require("../../services/taskService");
 
 const notificationsController = async (req, res) => {
   const user = req.user;
-  const userId = user.id;
-  const tasks = await getLatestUserTasks(userId);
-  console.log(tasks, userId);
-  res.status(200).json(tasks);
+
+  if (!user || !user.id) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+
+  try {
+    const tasks = await getLatestUserTasks(user.id);
+    if (!tasks || tasks.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No notifications found" });
+    }
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: "Notifications fetched successfully",
+        tasks,
+      });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 module.exports = {
