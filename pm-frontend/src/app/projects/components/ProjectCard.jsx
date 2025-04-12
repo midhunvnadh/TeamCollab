@@ -10,6 +10,17 @@ export default function ProjectCard({ project, onDelete }) {
     day: "numeric",
   });
 
+  const handleDelete = async () => {
+    if (
+      confirm(
+        "Are you sure you want to delete this project? This action cannot be undone."
+      )
+    ) {
+      await request.delete(`/projects/${project.id}`);
+      onDelete();
+    }
+  };
+
   return (
     <div key={project.id} className="card border border-gray-300 shadow-xs">
       <div className="card-body p-4">
@@ -27,10 +38,7 @@ export default function ProjectCard({ project, onDelete }) {
               View Project
             </Link>
             <button
-              onClick={async () => {
-                await request.delete(`/projects/${project.id}`);
-                onDelete();
-              }}
+              onClick={handleDelete}
               className="btn btn-error btn-sm shadow-none btn-square text-white"
             >
               <FaTrash />

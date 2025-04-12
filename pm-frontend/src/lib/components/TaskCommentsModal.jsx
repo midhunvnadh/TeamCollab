@@ -32,6 +32,9 @@ export default function TaskCommentsModal({ taskId, onClose }) {
   };
 
   const handleDeleteComment = async (commentId) => {
+    if (!confirm("Are you sure you want to delete this comment?")) {
+      return;
+    }
     try {
       await deleteComment(taskId, commentId);
       await loadComments();

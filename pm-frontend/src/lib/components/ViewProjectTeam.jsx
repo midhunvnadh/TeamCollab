@@ -24,6 +24,13 @@ export default function ViewProjectTeamModal({
   };
 
   const handleDeleteMember = async (username) => {
+    if (
+      !confirm(
+        "Are you sure you want to remove this team member from the project?"
+      )
+    ) {
+      return;
+    }
     const success = await deleteMember(username);
     if (!success) {
       alert("Something went wrong");

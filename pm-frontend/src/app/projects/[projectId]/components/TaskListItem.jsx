@@ -22,6 +22,13 @@ export default function TaskListItem({ task, members }) {
   const { deleteTask, assignTask } = useTasks();
 
   const handleDeleteTask = async () => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this task? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
     try {
       setFadeLoading(true);
       await deleteTask(task.id);
