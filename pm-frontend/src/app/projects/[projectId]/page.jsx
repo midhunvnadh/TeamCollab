@@ -14,6 +14,12 @@ export default function page({ params }) {
   const [members, setMembers] = useState([]);
   const { projectId } = use(params);
 
+  useEffect(() => {
+    if (projectDetails?.name) {
+      document.title = `${projectDetails.name} | TeamCollab`;
+    }
+  }, [projectDetails?.name]);
+
   const fetchMembers = async () => {
     const { data: members } = await request.get(
       `/projects/${projectId}/members`

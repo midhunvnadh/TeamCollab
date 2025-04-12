@@ -1,9 +1,15 @@
 "use client";
 import { useSession } from "@/lib/context/session";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
   const { user, loading, error } = useSession();
+
+  useEffect(() => {
+    document.title = "Welcome | TeamCollab";
+  }, []);
+
   if (!loading) {
     if (user) {
       redirect("/projects");

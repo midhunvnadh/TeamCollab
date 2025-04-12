@@ -2,12 +2,16 @@
 import request from "@/lib/request";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function signup() {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [password_c, setPassword_c] = React.useState("");
+
+  useEffect(() => {
+    document.title = "Sign Up | TeamCollab";
+  }, []);
 
   const signUp = async (e) => {
     e.preventDefault();

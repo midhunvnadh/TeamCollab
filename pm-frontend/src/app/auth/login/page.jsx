@@ -2,11 +2,15 @@
 import { useSession } from "@/lib/context/session";
 import request from "@/lib/request";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const { refetch } = useSession();
+
+  useEffect(() => {
+    document.title = "Sign In | TeamCollab";
+  }, []);
 
   const submitForm = async (e) => {
     e.preventDefault();

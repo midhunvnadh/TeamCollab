@@ -12,6 +12,10 @@ export default function page() {
   const [projects, setProjects] = React.useState([]);
   const [nd, setNd] = React.useState(false);
 
+  useEffect(() => {
+    document.title = "My Projects | TeamCollab";
+  }, []);
+
   const fetchProjects = async () => {
     setLoading(true);
     const { data } = await request.get("/projects");
