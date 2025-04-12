@@ -39,6 +39,7 @@ export default function ViewProjectTeamModal({
   };
 
   const handleAddMember = async (username) => {
+    console.log(username, addMember);
     const { success, message } = await addMember(username);
     if (!success) {
       alert(message || "Something went wrong");
