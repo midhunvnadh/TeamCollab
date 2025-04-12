@@ -49,30 +49,32 @@ export default function TaskList({
     >
       <div className="text-sm font-bold">{listname || "TaskList"}</div>
       <div className="divider my-0"></div>
-      <SortableContext
-        items={tasks.map((t) => t.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        <div className="space-y-2">
-          {tasks.length > 0 ? (
-            tasks.map((task, index) => (
-              <TaskListItem
-                key={task.id}
-                task={task}
-                tasksId={tasksId}
-                projectId={projectId}
-                refetch={refetch}
-                members={members}
-              />
-            ))
-          ) : (
-            <div className=" text-gray-500 text-xs">No tasks available</div>
-          )}
-        </div>
-        <div className="grow">
-          <div className="h-full overflow-auto"></div>
-        </div>
-      </SortableContext>
+      <div className="grow overflow-y-scroll">
+        <SortableContext
+          items={tasks.map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-2">
+            {tasks.length > 0 ? (
+              tasks.map((task, index) => (
+                <TaskListItem
+                  key={task.id}
+                  task={task}
+                  tasksId={tasksId}
+                  projectId={projectId}
+                  refetch={refetch}
+                  members={members}
+                />
+              ))
+            ) : (
+              <div className=" text-gray-500 text-xs">No tasks available</div>
+            )}
+          </div>
+          <div className="grow">
+            <div className="h-full overflow-auto"></div>
+          </div>
+        </SortableContext>
+      </div>
       <div className="divider my-0"></div>
       <div className="text-end">
         <textarea
