@@ -1,7 +1,4 @@
-import request from "@/lib/request";
-import Link from "next/link";
 import React from "react";
-import { FaTrash } from "react-icons/fa";
 import ProjectCard from "./ProjectCard";
 
 export default function ProjectsView({ projects, refetch }) {
