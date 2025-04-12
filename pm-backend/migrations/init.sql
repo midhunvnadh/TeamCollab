@@ -31,3 +31,13 @@ CREATE TABLE IF NOT EXISTS public.tasks (
     FOREIGN KEY (project_id) REFERENCES public.projects (id) ON DELETE CASCADE,
     FOREIGN KEY (assigned_to_user) REFERENCES public.users (id) ON DELETE SET NULL
 );
+
+CREATE TABLE IF NOT EXISTS public.task_comments (
+    id serial PRIMARY KEY,
+    task_id integer NOT NULL,
+    user_id integer NOT NULL,
+    comment text NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    FOREIGN KEY (task_id) REFERENCES public.tasks (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE
+);
