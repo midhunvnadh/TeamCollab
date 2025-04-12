@@ -28,9 +28,9 @@ export default function TaskBoard({ members }) {
   };
 
   return (
-    <div className="p-4 grow h-[calc(100svh-3.5rem)]">
+    <div className="lg:p-4 p-2 grow h-[calc(100svh-3.5rem)] lg:w-full w-[300vw]">
       <DndContext onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
+        <div className="grid grid-cols-3 gap-4 h-full">
           <TaskList
             listname="To Do"
             tasks={tasksByStatus[0]}
