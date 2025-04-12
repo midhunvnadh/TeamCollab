@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useSession } from "@/lib/context/session";
-import moment from "moment";
-import { HiTrash, HiXMark } from "react-icons/hi2";
+import { HiXMark } from "react-icons/hi2";
 import { useTasks } from "@/lib/context/tasks";
-import { FaPlaneSlash, FaRocket, FaRocketchat } from "react-icons/fa";
+import CommentList from "./CommentList";
+import CommentInput from "./CommentInput";
 
 export default function TaskCommentsModal({ taskId, onClose }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
-  const { user } = useSession();
   const { fetchComments, addComment, deleteComment } = useTasks();
 
   const loadComments = async () => {
@@ -64,51 +62,16 @@ export default function TaskCommentsModal({ taskId, onClose }) {
           </div>
         </div>
         <div className="py-4">
-          <div className="space-y-4 mb-4 max-h-96 overflow-auto">
-            {comments.map((comment) => (
-              <div key={comment.id} className="chat chat-start">
-                <div className="chat-header mb-1">
-                  @{comment.user}{" "}
-                  <time className="text-xs opacity-50">
-                    {moment(comment.created_at).fromNow()}
-                  </time>
-                  {user?.username === comment.user && (
-                    <button
-                      className="btn btn-ghost btn-xs"
-                      onClick={() => handleDeleteComment(comment.id)}
-                    >
-                      <HiTrash className="text-error" />
-                    </button>
-                  )}
-                </div>
-                <div className="chat-bubble">{comment.comment}</div>
-              </div>
-            ))}
-          </div>
-          <div className="form-control">
-            <div className="input-group flex space-x-2">
-              <input
-                type="text"
-                placeholder="Type your comment"
-                className="input input-sm w-full"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleAddComment();
-                  }
-                }}
-              />
-              <button
-                className={`btn btn-sm ${loading ? "loading" : ""}`}
-                onClick={handleAddComment}
-                disabled={!newComment.trim() || loading}
-              >
-                <FaRocketchat />
-              </button>
-            </div>
-          </div>
+          <CommentList
+            comments={comments}
+            onDeleteComment={handleDeleteComment}
+          />
+          <CommentInput
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            onSubmit={handleAddComment}
+            loading={loading}
+          />
         </div>
       </div>
     </div>
