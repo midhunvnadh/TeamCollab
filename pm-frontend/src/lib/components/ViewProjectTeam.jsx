@@ -1,62 +1,52 @@
-import React, { useEffect, useState } from "react";
-import request from "../request";
+import React, { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useSession } from "../context/session";
 import { HiMiniXMark } from "react-icons/hi2";
+import { useTasks } from "../context/tasks";
 
 export default function ViewProjectTeamModal({
   show,
   hide,
   members,
   fetchMembers,
-  projectId,
 }) {
   const [usernameToInvite, setusernameToInvite] = useState("");
+  const { setMemberAdmin, deleteMember, addMember } = useTasks();
+  const { user } = useSession();
 
-  const setAdmin = async (username, admin) => {
-    const { data: d } = await request.patch(
-      `/projects/${projectId}/members/${username}`,
-      {
-        admin,
-      }
-    );
-    if (!d.success) {
+  const handleSetAdmin = async (username, admin) => {
+    const success = await setMemberAdmin(username, admin);
+    if (!success) {
       alert("Something went wrong");
       return;
     }
     fetchMembers();
   };
 
-  const deleteMember = async (username) => {
-    const { data: d } = await request.delete(
-      `/projects/${projectId}/members/${username}`
-    );
-    if (!d.success) {
+  const handleDeleteMember = async (username) => {
+    const success = await deleteMember(username);
+    if (!success) {
       alert("Something went wrong");
       return;
     }
     fetchMembers();
   };
 
-  const addNewMember = async (e) => {
+  const handleAddNewMember = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (!usernameToInvite) {
       alert("Please enter a username");
       return;
     }
-    const { data: d } = await request.put(`/projects/${projectId}/members`, {
-      username: usernameToInvite,
-    });
-    if (!d.success) {
-      alert(d.message);
+    const { success, message } = await addMember(usernameToInvite);
+    if (!success) {
+      alert(message || "Something went wrong");
       return;
     }
     setusernameToInvite("");
     fetchMembers();
   };
-
-  const { user } = useSession();
 
   const isTheLoggedInUserAdmin = members.find(
     (member) => member.username === user?.username
@@ -93,41 +83,39 @@ export default function ViewProjectTeamModal({
                   <tbody>
                     {members
                       ?.sort((a, b) => a.username.localeCompare(b.username))
-                      ?.map((member, i) => {
-                        return (
-                          <tr key={member.id}>
-                            <td>@{member.username}</td>
-
-                            <td>
-                              <input
-                                type="checkbox"
-                                className="checkbox checkbox-sm"
-                                disabled={
-                                  !isTheLoggedInUserAdmin ||
-                                  user.username === member.username
-                                }
-                                defaultChecked={member.admin}
-                                onClick={(e) => {
-                                  setAdmin(member.username, e.target.checked);
-                                }}
-                              />
-                            </td>
-                            <td>
-                              <button
-                                className="btn btn-xs btn-error btn-square text-white"
-                                disabled={
-                                  member.username === "admin" || i === 0
-                                }
-                                onClick={async () => {
-                                  await deleteMember(member.username);
-                                }}
-                              >
-                                <FaTrash />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                      ?.map((member, i) => (
+                        <tr key={member.id}>
+                          <td>@{member.username}</td>
+                          <td>
+                            <input
+                              type="checkbox"
+                              className="checkbox checkbox-sm"
+                              disabled={
+                                !isTheLoggedInUserAdmin ||
+                                user.username === member.username
+                              }
+                              defaultChecked={member.admin}
+                              onClick={(e) => {
+                                handleSetAdmin(
+                                  member.username,
+                                  e.target.checked
+                                );
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <button
+                              className="btn btn-xs btn-error btn-square text-white"
+                              disabled={member.username === "admin" || i === 0}
+                              onClick={() =>
+                                handleDeleteMember(member.username)
+                              }
+                            >
+                              <FaTrash />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                   {isTheLoggedInUserAdmin && (
                     <tfoot>
@@ -147,7 +135,7 @@ export default function ViewProjectTeamModal({
                             />
                             <button
                               className="btn btn-success btn-sm"
-                              onClick={addNewMember}
+                              onClick={handleAddNewMember}
                             >
                               Invite
                             </button>

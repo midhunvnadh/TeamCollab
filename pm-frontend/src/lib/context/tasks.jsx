@@ -144,6 +144,55 @@ export function TaskProvider({ children, projectId }) {
     [projectId]
   );
 
+  // Team management
+  const setMemberAdmin = useCallback(
+    async (username, admin) => {
+      try {
+        const { data } = await request.patch(
+          `/projects/${projectId}/members/${username}`,
+          {
+            admin,
+          }
+        );
+        return data.success;
+      } catch (error) {
+        console.error("Error setting member admin status:", error);
+        return false;
+      }
+    },
+    [projectId]
+  );
+
+  const deleteMember = useCallback(
+    async (username) => {
+      try {
+        const { data } = await request.delete(
+          `/projects/${projectId}/members/${username}`
+        );
+        return data.success;
+      } catch (error) {
+        console.error("Error deleting member:", error);
+        return false;
+      }
+    },
+    [projectId]
+  );
+
+  const addMember = useCallback(
+    async (username) => {
+      try {
+        const { data } = await request.put(`/projects/${projectId}/members`, {
+          username,
+        });
+        return { success: data.success, message: data.message };
+      } catch (error) {
+        console.error("Error adding member:", error);
+        return { success: false, message: error.message };
+      }
+    },
+    [projectId]
+  );
+
   return (
     <TaskContext.Provider
       value={{
@@ -157,6 +206,9 @@ export function TaskProvider({ children, projectId }) {
         fetchComments,
         addComment,
         deleteComment,
+        setMemberAdmin,
+        deleteMember,
+        addMember,
       }}
     >
       {children}
