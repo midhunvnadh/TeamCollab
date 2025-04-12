@@ -8,7 +8,7 @@ const addComment = async (taskId, userId, comment) => {
   `;
   const values = [taskId, userId, comment];
   const result = await db.query(query, values);
-  return result.rows[0];
+  return result.length > 0;
 };
 
 const fetchComments = async (taskId) => {
@@ -21,7 +21,7 @@ const fetchComments = async (taskId) => {
   `;
   const values = [taskId];
   const result = await db.query(query, values);
-  return result.rows;
+  return result;
 };
 
 const updateComment = async (commentId, updatedComment) => {
@@ -33,7 +33,7 @@ const updateComment = async (commentId, updatedComment) => {
   `;
   const values = [updatedComment, commentId];
   const result = await db.query(query, values);
-  return result.rows[0];
+  return result.length > 0;
 };
 
 const removeComment = async (commentId) => {
@@ -44,7 +44,7 @@ const removeComment = async (commentId) => {
   `;
   const values = [commentId];
   const result = await db.query(query, values);
-  return result.rows[0];
+  return result.length > 0;
 };
 
 module.exports = {

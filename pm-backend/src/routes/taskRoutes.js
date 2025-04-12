@@ -23,8 +23,8 @@ router.get("/:projectId/tasks/:taskId", getTaskController);
 router.patch("/:projectId/tasks/:taskId", editTask);
 router.delete("/:projectId/tasks/:taskId", deleteTaskController);
 
-router.put("/:projectId/tasks/:taskId/comments", createComment);
 router.get("/:projectId/tasks/:taskId/comments", getComments);
+router.put("/:projectId/tasks/:taskId/comments", createComment);
 router.patch("/:projectId/tasks/:taskId/comments/:commentId", editComment);
 router.delete("/:projectId/tasks/:taskId/comments/:commentId", deleteComment);
 
