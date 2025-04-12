@@ -45,26 +45,26 @@ export default function page({ params }) {
 
   return (
     <div className="min-h-svh">
-      <ViewProjectModal
-        show={showProjectModal}
-        project={projectDetails}
-        hide={() => setShowProjectModal(false)}
-        refetch={refetch}
-      />
-      <ViewProjectTeamModal
-        show={showProjectTeamModal}
-        projectId={projectDetails?.id}
-        members={members}
-        fetchMembers={fetchMembers}
-        hide={() => setShowProjectTeamModal(false)}
-        refetch={refetch}
-      />
-      <ProjectHeader
-        projectDetails={projectDetails}
-        onShowTeamModal={() => setShowProjectTeamModal(true)}
-        onShowProjectModal={() => setShowProjectModal(true)}
-      />
       <TaskProvider projectId={projectId}>
+        <ViewProjectModal
+          show={showProjectModal}
+          project={projectDetails}
+          hide={() => setShowProjectModal(false)}
+          refetch={refetch}
+        />
+        <ViewProjectTeamModal
+          show={showProjectTeamModal}
+          projectId={projectDetails?.id}
+          members={members}
+          fetchMembers={fetchMembers}
+          hide={() => setShowProjectTeamModal(false)}
+          refetch={refetch}
+        />
+        <ProjectHeader
+          projectDetails={projectDetails}
+          onShowTeamModal={() => setShowProjectTeamModal(true)}
+          onShowProjectModal={() => setShowProjectModal(true)}
+        />
         <TaskBoard members={members} />
       </TaskProvider>
     </div>
