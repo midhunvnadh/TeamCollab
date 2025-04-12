@@ -12,8 +12,20 @@ export default function NotificationsDrawer({ open, close }) {
   }, []);
   return (
     <div>
-      <div className="drawer drawer-end drawer-open">
+      <div className="drawer drawer-end">
+        <input
+          id="my-drawer"
+          type="checkbox"
+          className="drawer-toggle"
+          checked={open}
+          onChange={close}
+        />
         <div className="drawer-side">
+          <label
+            htmlFor="my-drawer"
+            aria-label="close sidebar"
+            className="drawer-overlay"
+          ></label>
           <div className="menu bg-base-200 text-base-content min-h-full w-80 p-4 space-y-2 overflow-y-auto">
             {notifications?.map((n) => {
               return (
