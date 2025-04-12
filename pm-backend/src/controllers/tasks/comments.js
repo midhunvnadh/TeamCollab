@@ -13,7 +13,7 @@ const createComment = async (req, res) => {
     const newComment = await addComment(taskId, userId, comment);
     if (!newComment) {
       return res
-        .status(400)
+        .status(500)
         .json({ success: false, error: "Failed to add comment" });
     }
     res.status(201).json({
@@ -30,6 +30,11 @@ const getComments = async (req, res) => {
   try {
     const { taskId } = req.params;
     const comments = await fetchComments(taskId);
+    if (!comments || comments.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "No comments found" });
+    }
     res.status(200).json({ success: true, comments });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -43,8 +48,8 @@ const editComment = async (req, res) => {
     const updatedComment = await updateComment(commentId, comment);
     if (!updatedComment) {
       return res
-        .status(400)
-        .json({ success: false, error: "Failed to update comment" });
+        .status(404)
+        .json({ success: false, error: "Comment not found" });
     }
     res.status(200).json({
       success: true,
@@ -62,8 +67,8 @@ const deleteComment = async (req, res) => {
     const deletedComment = await removeComment(commentId);
     if (!deletedComment) {
       return res
-        .status(400)
-        .json({ success: false, error: "Failed to delete comment" });
+        .status(404)
+        .json({ success: false, error: "Comment not found" });
     }
     res.status(200).json({
       success: true,

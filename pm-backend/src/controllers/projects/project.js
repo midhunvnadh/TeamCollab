@@ -45,8 +45,8 @@ const getProjectController = async (req, res) => {
       project: c.projects[0],
     });
   }
-  return res.status(500).json({
-    message: "Error fetching project",
+  return res.status(404).json({
+    message: "Project not found",
   });
 };
 
@@ -60,9 +60,9 @@ const deleteProjectController = async (req, res) => {
       message: "Project deleted successfully",
     });
   }
-  return res.status(500).json({
+  return res.status(404).json({
     success: false,
-    message: c.message || "Error deleting project",
+    message: c.message || "Project not found",
   });
 };
 
@@ -79,9 +79,9 @@ const editProjectController = async (req, res) => {
       message: "Project edited successfully",
     });
   }
-  return res.status(500).json({
+  return res.status(404).json({
     success: false,
-    message: result.message || "Error editing project",
+    message: result.message || "Project not found",
   });
 };
 

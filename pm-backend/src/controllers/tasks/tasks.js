@@ -13,7 +13,7 @@ const createTask = async (req, res) => {
 
     const task = await createTaskService(projectId, name, userId, status);
     if (!task.success) {
-      return res.status(400).json({ message: "Failed to create task" });
+      return res.status(500).json({ message: "Failed to create task" });
     }
 
     res.status(201).json({
@@ -30,7 +30,7 @@ const getTasks = async (req, res) => {
   try {
     const { projectId } = req.params;
     const tasks = await getTasksService(projectId);
-    if (!tasks) {
+    if (!tasks || tasks.length === 0) {
       return res.status(404).json({ message: "No tasks found" });
     }
     res.status(200).json(tasks);
@@ -64,6 +64,9 @@ const getTaskController = async (req, res) => {
   try {
     const { taskId } = req.params;
     const task = await getTask(taskId);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
     res.status(200).json(task);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -74,6 +77,9 @@ const deleteTaskController = async (req, res) => {
   try {
     const { taskId } = req.params;
     const task = await deleteTaskService(taskId);
+    if (!task.success) {
+      return res.status(404).json({ message: "Task not found" });
+    }
     res.status(200).json(task);
   } catch (error) {
     res.status(500).json({ message: error.message });
