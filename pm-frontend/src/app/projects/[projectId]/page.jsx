@@ -78,7 +78,6 @@ export default function page({ params }) {
   };
 
   const sensors = useSensors(
-    // useSensor(PointerSensor),
     useSensor(KeyboardSensor),
     useSensor(TouchSensor, {
       distance: 0,

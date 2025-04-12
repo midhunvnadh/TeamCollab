@@ -70,9 +70,6 @@ export default function TaskList({
               <div className=" text-gray-500 text-xs">No tasks available</div>
             )}
           </div>
-          <div className="grow">
-            <div className="h-full overflow-auto"></div>
-          </div>
         </SortableContext>
       </div>
       <div className="divider my-0"></div>
@@ -91,7 +88,7 @@ export default function TaskList({
           <div className="space-x-2">
             <input
               type="checkbox"
-              className="checkbox checkbox-sm"
+              className="checkbox checkbox-xs"
               checked={assignToMe}
               id={`${tasksId}-cb`}
               onChange={() => {
