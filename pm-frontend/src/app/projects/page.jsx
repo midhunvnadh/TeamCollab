@@ -27,7 +27,7 @@ export default function page() {
     fetchProjects();
   }, []);
   return (
-    <div className="">
+    <div className="px-4 lg:p-0">
       <div className="container mx-auto sticky top-5 mt-5">
         <div className="w-full p-2 bg-base-300 flex items-center justify-between rounded-xl px-2">
           <div className="font-black tracking-wide">
