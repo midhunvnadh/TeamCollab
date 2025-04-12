@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { getUserById } = require("../repository/user");
 
-const session = async (req, res, next) => {
+const sessionMW = async (req, res, next) => {
   const token = req?.headers?.authorization?.split(" ")?.[1];
 
   if (!token) {
@@ -31,4 +31,4 @@ const session = async (req, res, next) => {
   }
 };
 
-module.exports = { session };
+module.exports = { sessionMW };
