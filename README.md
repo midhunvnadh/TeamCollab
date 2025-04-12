@@ -9,7 +9,8 @@ http://localhost:3000
 
 # Known Issues
 
-There are a lot of issues, I might have only worked a total of 15 hrs (max) collectively on this app. The requirements still satisfy "exactly" as written in task sheet.
+1. Refresh tokens are not implemented.
+2. Tests are not written.
 
 # Deliverables
 
