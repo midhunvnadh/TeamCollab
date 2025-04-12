@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import request from "@/lib/request";
 import { useSession } from "@/lib/context/session";
 import moment from "moment";
+import { HiTrash } from "react-icons/hi2";
 
 export default function TaskCommentsModal({ taskId, projectId, onClose }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const { user } = useSession();
 
   const fetchComments = async () => {
     try {
@@ -32,6 +34,17 @@ export default function TaskCommentsModal({ taskId, projectId, onClose }) {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteComment = async (commentId) => {
+    try {
+      await request.delete(
+        `/projects/${projectId}/tasks/${taskId}/comments/${commentId}`
+      );
+      await fetchComments();
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -69,10 +82,22 @@ export default function TaskCommentsModal({ taskId, projectId, onClose }) {
               {comments.map((comment) => (
                 <div key={comment.id} className="bg-base-200 rounded-lg p-3">
                   <div className="flex justify-between items-start mb-2">
-                    <span className="font-medium">@{comment.user}</span>
-                    <span className="text-xs text-gray-500">
-                      {moment(comment.created_at).fromNow()}
-                    </span>
+                    <div className="flex justify-between items-center w-full">
+                      <span className="font-medium">@{comment.user}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">
+                          {moment(comment.created_at).fromNow()}
+                        </span>
+                        {comment.user === user?.username && (
+                          <button
+                            onClick={() => deleteComment(comment.id)}
+                            className="btn btn-ghost btn-xs text-error btn-circle"
+                          >
+                            <HiTrash />
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   <p className="text-sm">{comment.comment}</p>
                 </div>
