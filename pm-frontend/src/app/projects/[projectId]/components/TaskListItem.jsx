@@ -38,23 +38,28 @@ export default function TaskListItem({ task, projectId, refetch, members }) {
   };
 
   const assignChange = async (userId) => {
-    const { data } = await request.patch(
-      `/projects/${projectId}/tasks/${task.id}`,
-      {
-        assignTo: userId,
+    setFadeLoading(true);
+    try {
+      const { data } = await request.patch(
+        `/projects/${projectId}/tasks/${task.id}`,
+        {
+          assignTo: userId,
+        }
+      );
+      if (!data.success) {
+        alert(data.message);
+        return;
       }
-    );
-    if (!data.success) {
-      alert(data.message);
-      return;
+      refetch();
+    } finally {
+      setFadeLoading(false);
     }
-    refetch();
   };
 
   return (
     <div
       ref={setNodeRef}
-      className={`border border-base-200 bg-base-100  p-2 ${
+      className={`border rounded-lg border-base-200 bg-base-100 shadow p-2 ${
         fadeLoading ? "animate-pulse" : ""
       }`}
       draggable={true}
@@ -62,35 +67,35 @@ export default function TaskListItem({ task, projectId, refetch, members }) {
       {...listeners}
       style={style}
     >
-      <div>
-        <h3>{task.title}</h3>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="text-xs">Assigned to</span>
-        <span>
-          <select
-            onChange={async (e) => {
-              const value = e.target.value;
-              assignChange(value);
-            }}
-            value={task.assigned_to_user}
-            className="select select-bordered select-xs"
-          >
-            {members.map((m) => {
-              return (
-                <option value={m.id} key={m.id}>
-                  @{m.username}
-                </option>
-              );
-            })}
-          </select>
-        </span>
-      </div>
-      <div className="flex justify-between items-end gap-2">
-        <div className="text-xs">{d}</div>
+      <div className="flex justify-between items-center border-b border-gray-200 pb-1 space-x-2">
+        <div className="flex items-center gap-2 justify-between grow">
+          <span className="text-xs italic text-gray-400">Assigned to</span>
+          <span>
+            <select
+              disabled={fadeLoading}
+              onChange={async (e) => {
+                const value = e.target.value;
+                assignChange(value);
+              }}
+              value={task.assigned_to_user || ""}
+              className="select select-bordered select-xs"
+            >
+              {!task.assigned_to_user && (
+                <option value={""}>Select a user</option>
+              )}
+              {members.map((m) => {
+                return (
+                  <option value={m.id} key={m.id}>
+                    @{m.username}
+                  </option>
+                );
+              })}
+            </select>
+          </span>
+        </div>
         <div>
           <button
-            className="btn btn-error btn-xs btn-circle"
+            className="btn btn-error btn-xs btn-square text-white"
             onMouseUp={(e) => {
               e.stopPropagation();
               console.log("delete");
@@ -104,6 +109,13 @@ export default function TaskListItem({ task, projectId, refetch, members }) {
             )}
           </button>
         </div>
+      </div>
+      <div className="min-h-14 py-2 text-sm font-medium">
+        <h3>{task.title}</h3>
+      </div>
+
+      <div className="flex justify-end italic text-gray-400 items-end gap-2">
+        <div className="text-xs">{d}</div>
       </div>
     </div>
   );

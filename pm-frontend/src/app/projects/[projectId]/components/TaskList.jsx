@@ -53,7 +53,7 @@ export default function TaskList({
         items={tasks.map((t) => t.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div>
+        <div className="space-y-2">
           {tasks.length > 0 ? (
             tasks.map((task, index) => (
               <TaskListItem

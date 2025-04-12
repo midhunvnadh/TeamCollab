@@ -128,7 +128,7 @@ export default function page({ params }) {
         <div className="w-full flex justify-between items-center">
           <div>
             <Link href="/projects" className="flex items-center gap-2">
-              <div>
+              <div className="btn btn-circle btn-ghost">
                 <PiArrowLeft />
               </div>
               <div>{projectDetails?.name || "Loading..."}</div>
@@ -144,7 +144,7 @@ export default function page({ params }) {
               <FaUsers />
             </button>
             <button
-              className="btn btn-ghost btn-circle"
+              className="btn btn-ghost text-primary btn-circle"
               onClick={() => {
                 setShowProjectModal(true);
               }}

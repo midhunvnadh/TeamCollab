@@ -36,14 +36,6 @@ export default function page() {
           <div className="flex gap-2">
             <div>
               <button
-                onClick={logout}
-                className="btn btn-ghost btn-sm shadow-none btn-circle btn-error"
-              >
-                <CiLogout />
-              </button>
-            </div>
-            <div>
-              <button
                 className="btn btn-ghost btn-sm shadow-none btn-circle"
                 onClick={() => setNd(!nd)}
               >
@@ -61,6 +53,17 @@ export default function page() {
                   <FaPlusCircle className="text-sm" />
                 </span>
                 <span>New Project</span>
+              </button>
+            </div>
+            <div>
+              <button
+                onClick={logout}
+                className="btn btn-sm shadow-none btn-error"
+              >
+                <span>
+                  <CiLogout strokeWidth={2} />
+                </span>
+                <span>Logout</span>
               </button>
             </div>
           </div>

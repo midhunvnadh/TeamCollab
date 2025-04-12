@@ -101,7 +101,7 @@ export default function ViewProjectTeamModal({
                             <td>
                               <input
                                 type="checkbox"
-                                className="checkbox"
+                                className="checkbox checkbox-sm"
                                 disabled={
                                   !isTheLoggedInUserAdmin ||
                                   user.username === member.username
@@ -114,7 +114,7 @@ export default function ViewProjectTeamModal({
                             </td>
                             <td>
                               <button
-                                className="btn btn-xs btn-error btn-square"
+                                className="btn btn-xs btn-error btn-square text-white"
                                 disabled={
                                   member.username === "admin" || i === 0
                                 }
@@ -133,25 +133,25 @@ export default function ViewProjectTeamModal({
                     <tfoot>
                       <tr>
                         <td colSpan={2}>
-                          <input
-                            type="text"
-                            name="username"
-                            placeholder="Username"
-                            className="input input-bordered input-sm w-full"
-                            autoComplete="off"
-                            value={usernameToInvite}
-                            onChange={(e) =>
-                              setusernameToInvite(e.target.value)
-                            }
-                          />
-                        </td>
-                        <td>
-                          <button
-                            className="btn btn-success btn-sm"
-                            onClick={addNewMember}
-                          >
-                            Invite
-                          </button>
+                          <div className="space-x-2">
+                            <input
+                              type="text"
+                              name="username"
+                              placeholder="Username"
+                              className="input input-bordered input-sm w-full"
+                              autoComplete="off"
+                              value={usernameToInvite}
+                              onChange={(e) =>
+                                setusernameToInvite(e.target.value)
+                              }
+                            />
+                            <button
+                              className="btn btn-success btn-sm"
+                              onClick={addNewMember}
+                            >
+                              Invite
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     </tfoot>
