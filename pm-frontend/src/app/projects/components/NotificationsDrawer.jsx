@@ -32,7 +32,7 @@ export default function NotificationsDrawer({ open, close }) {
             {notifications?.map((n) => {
               return (
                 <div
-                  key={n.id}
+                  key={n.created_at}
                   className="alert alert-info shadow-lg rounded-sm"
                 >
                   <p>

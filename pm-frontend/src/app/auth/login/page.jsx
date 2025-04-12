@@ -28,7 +28,7 @@ export default function Login() {
       <div className="dark:bg-base-300 bg-gray-50 p-5 w-sm rounded-sm space-y-3">
         <div>
           <div className="mb-4">
-            <h1 className="font-bold text-3xl dark:text-white text-black text-center">
+            <h1 className="font-bold text-3xl text-black text-center">
               Team Collab
             </h1>
             <h2 className="text-center">Sign In</h2>
@@ -49,7 +49,7 @@ export default function Login() {
             </button>
           </div>
         </form>
-        <div className="text-center dark:text-white text-black">
+        <div className="text-center text-black">
           <span>OR</span>
         </div>
         <div>

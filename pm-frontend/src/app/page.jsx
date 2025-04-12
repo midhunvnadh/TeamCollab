@@ -13,7 +13,7 @@ export default function Home() {
   }
   return (
     <main className="w-full h-screen flex items-center justify-center flex-col">
-      <h1 className="text-3xl font-bold">TeamCollab!</h1>
+      <h1 className="text-3xl font-bold text-black">TeamCollab!</h1>
       <div className="py-2"></div>
       <div>
         {loading && (

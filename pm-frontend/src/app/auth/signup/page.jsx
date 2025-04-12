@@ -30,7 +30,7 @@ export default function signup() {
       <div className="dark:bg-base-300 bg-gray-50 p-5 w-sm rounded-sm space-y-3">
         <div>
           <div className="mb-4 text-center">
-            <h1 className="font-bold text-3xl dark:text-white text-black text-center">
+            <h1 className="font-bold text-3xl text-black text-center">
               Team Collab
             </h1>
             <h2>Sign Up</h2>
@@ -79,7 +79,7 @@ export default function signup() {
             </button>
           </div>
         </form>
-        <div className="text-center dark:text-white text-black">
+        <div className="text-center text-black">
           <span>OR</span>
         </div>
         <div>
