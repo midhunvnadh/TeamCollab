@@ -1,4 +1,3 @@
-import request from "@/lib/request";
 import moment from "moment";
 import React, { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
@@ -6,8 +5,9 @@ import { CSS } from "@dnd-kit/utilities";
 import TaskCommentsModal from "@/lib/components/TaskCommentsModal";
 import TaskActions from "./TaskActions";
 import TaskAssignment from "./TaskAssignment";
+import { useTasks } from "@/lib/context/tasks";
 
-export default function TaskListItem({ task, projectId, refetch, members }) {
+export default function TaskListItem({ task, members }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
       id: task.id,
@@ -22,12 +22,12 @@ export default function TaskListItem({ task, projectId, refetch, members }) {
   const [fadeLoading, setFadeLoading] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const d = moment(task.created_at).format("dddd, MMMM Do YYYY");
+  const { deleteTask, assignTask } = useTasks();
 
-  const deleteTask = async () => {
+  const handleDeleteTask = async () => {
     try {
       setFadeLoading(true);
-      await request.delete(`/projects/${projectId}/tasks/${task.id}`);
-      await refetch();
+      await deleteTask(task.id);
     } catch (error) {
       console.error(error);
     } finally {
@@ -35,20 +35,10 @@ export default function TaskListItem({ task, projectId, refetch, members }) {
     }
   };
 
-  const assignChange = async (userId) => {
+  const handleAssignChange = async (userId) => {
     setFadeLoading(true);
     try {
-      const { data } = await request.patch(
-        `/projects/${projectId}/tasks/${task.id}`,
-        {
-          assignTo: userId,
-        }
-      );
-      if (!data.success) {
-        alert(data.message);
-        return;
-      }
-      refetch();
+      await assignTask(task.id, userId);
     } finally {
       setFadeLoading(false);
     }
@@ -75,11 +65,11 @@ export default function TaskListItem({ task, projectId, refetch, members }) {
           <TaskAssignment
             members={members}
             assignedUserId={task.assigned_to_user}
-            onAssignChange={assignChange}
+            onAssignChange={handleAssignChange}
             disabled={fadeLoading}
           />
           <TaskActions
-            onDelete={deleteTask}
+            onDelete={handleDeleteTask}
             onShowComments={() => setShowComments(true)}
             fadeLoading={fadeLoading}
           />
@@ -95,7 +85,6 @@ export default function TaskListItem({ task, projectId, refetch, members }) {
       {showComments && (
         <TaskCommentsModal
           taskId={task.id}
-          projectId={projectId}
           onClose={() => setShowComments(false)}
         />
       )}

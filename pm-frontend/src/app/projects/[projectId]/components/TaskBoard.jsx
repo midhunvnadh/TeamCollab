@@ -1,68 +1,56 @@
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  TouchSensor,
-  MouseSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+import React, { useEffect } from "react";
 import TaskList from "./TaskList";
+import { DndContext } from "@dnd-kit/core";
+import { useTasks } from "@/lib/context/tasks";
 
-export default function TaskBoard({
-  tasks,
-  projectId,
-  members,
-  onTaskMove,
-  refetchTasks,
-}) {
-  const sensors = useSensors(
-    useSensor(KeyboardSensor),
-    useSensor(TouchSensor, {
-      distance: 0,
-      delay: 0,
-    }),
-    useSensor(MouseSensor)
-  );
+export default function TaskBoard({ members }) {
+  const { tasks, fetchTasks, updateTaskStatus } = useTasks();
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (!over || !active) return;
+    if (!over) return;
+
     const activeId = active.id;
-    if (active.data.current.status !== over.data.current.status) {
-      onTaskMove(activeId, over.data.current.status);
-    }
+    const overId = over.id;
+
+    const overStatus = Number(overId.split("-")[1]);
+    updateTaskStatus(activeId, overStatus);
+  };
+
+  const tasksByStatus = {
+    0: tasks?.filter((t) => t.status === 0) || [],
+    1: tasks?.filter((t) => t.status === 1) || [],
+    2: tasks?.filter((t) => t.status === 2) || [],
   };
 
   return (
-    <div className="lg:p-2 p-0 h-[calc(100vh-3.5rem)] overflow-y-auto lg:w-auto overflow-x-auto">
-      <div className="grid grid-cols-3 grid-rows-1 lg:gap-3 lg:w-full w-[300vw] h-full">
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragMove={handleDragEnd}
-          sensors={sensors}
-        >
-          {[
-            { name: "To Do", tasksId: 0 },
-            { name: "In Progress", tasksId: 1 },
-            { name: "Done", tasksId: 2 },
-          ].map((list, index) => {
-            const ts = tasks?.filter((task) => task.status === list.tasksId);
-            return (
-              <div key={index} className="lg:p-0 p-5">
-                <TaskList
-                  listname={list.name}
-                  tasks={ts}
-                  tasksId={list.tasksId}
-                  projectId={projectId}
-                  refetch={refetchTasks}
-                  members={members}
-                />
-              </div>
-            );
-          })}
-        </DndContext>
-      </div>
+    <div className="p-4 grow h-[calc(100svh-3.5rem)]">
+      <DndContext onDragEnd={handleDragEnd}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
+          <TaskList
+            listname="To Do"
+            tasks={tasksByStatus[0]}
+            tasksId={0}
+            members={members}
+          />
+          <TaskList
+            listname="In Progress"
+            tasks={tasksByStatus[1]}
+            tasksId={1}
+            members={members}
+          />
+          <TaskList
+            listname="Done"
+            tasks={tasksByStatus[2]}
+            tasksId={2}
+            members={members}
+          />
+        </div>
+      </DndContext>
     </div>
   );
 }

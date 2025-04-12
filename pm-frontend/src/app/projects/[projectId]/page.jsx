@@ -5,9 +5,9 @@ import ViewProjectModal from "@/lib/components/ViewProjectModal";
 import ViewProjectTeamModal from "@/lib/components/ViewProjectTeam";
 import ProjectHeader from "./components/ProjectHeader";
 import TaskBoard from "./components/TaskBoard";
+import { TaskProvider } from "@/lib/context/tasks";
 
 export default function page({ params }) {
-  const [tasks, setTasks] = useState([]);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showProjectTeamModal, setShowProjectTeamModal] = useState(false);
   const [projectDetails, setProjectDetails] = useState(null);
@@ -21,11 +21,6 @@ export default function page({ params }) {
     setMembers(members?.members);
   };
 
-  const fetchTasks = async () => {
-    const { data: tasks } = await request.get(`/projects/${projectId}/tasks`);
-    setTasks(tasks);
-  };
-
   const fetchProjectDetails = async () => {
     const { data: pd } = await request.get(`/projects/${projectId}/`);
     setProjectDetails(pd?.project);
@@ -33,39 +28,12 @@ export default function page({ params }) {
 
   useEffect(() => {
     if (projectId) {
-      fetchTasks();
       fetchProjectDetails();
       fetchMembers();
     }
   }, [projectId]);
 
-  var moveTimer = null;
-
-  const updateTaskStatus = async (taskId, newStatus) => {
-    try {
-      if (moveTimer) clearTimeout(moveTimer);
-      setTasks((prevTasks) => {
-        const updatedTasks = prevTasks.map((task) => {
-          if (task.id === taskId) {
-            return { ...task, status: newStatus };
-          }
-          return task;
-        });
-        return updatedTasks;
-      });
-      moveTimer = setTimeout(async () => {
-        await request.patch(`/projects/${projectId}/tasks/${taskId}`, {
-          status: newStatus,
-        });
-        fetchTasks();
-      }, 500);
-    } catch (error) {
-      console.error("Error updating task status:", error);
-    }
-  };
-
   const refetch = () => {
-    fetchTasks();
     fetchProjectDetails();
   };
 
@@ -90,13 +58,9 @@ export default function page({ params }) {
         onShowTeamModal={() => setShowProjectTeamModal(true)}
         onShowProjectModal={() => setShowProjectModal(true)}
       />
-      <TaskBoard
-        tasks={tasks}
-        projectId={projectId}
-        members={members}
-        onTaskMove={updateTaskStatus}
-        refetchTasks={fetchTasks}
-      />
+      <TaskProvider projectId={projectId}>
+        <TaskBoard members={members} />
+      </TaskProvider>
     </div>
   );
 }

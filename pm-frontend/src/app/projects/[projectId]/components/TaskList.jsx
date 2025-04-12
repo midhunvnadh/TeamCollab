@@ -1,45 +1,35 @@
 import React from "react";
 import TaskListItem from "./TaskListItem";
-import request from "@/lib/request";
 import { useSession } from "@/lib/context/session";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
+import { useTasks } from "@/lib/context/tasks";
 
-export default function TaskList({
-  listname,
-  tasks,
-  tasksId,
-  projectId,
-  refetch,
-  members,
-}) {
+export default function TaskList({ listname, tasks, tasksId, members }) {
   const [newTask, setNewTask] = React.useState("");
   const [assignToMe, setAssignToMe] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const { loading, createTask } = useTasks();
   const { user } = useSession();
 
   const { setNodeRef } = useDroppable({
-    id: `droppable-${tasksId}`, // Each droppable area needs a unique ID
+    id: `droppable-${tasksId}`,
     data: {
       status: tasksId,
     },
   });
 
-  const createNewTask = async () => {
-    setLoading(true);
-    const { data } = await request.put(`/projects/${projectId}/tasks`, {
-      name: newTask,
-      status: tasksId,
-      assignTo: assignToMe ? user?.id : null,
-    });
-    if (data) {
+  const handleCreateTask = async () => {
+    const result = await createTask(
+      newTask,
+      tasksId,
+      assignToMe ? user?.id : null
+    );
+    if (result) {
       setNewTask("");
-      refetch();
     }
-    setLoading(false);
   };
 
   return (
@@ -56,18 +46,11 @@ export default function TaskList({
         >
           <div className="space-y-2">
             {tasks.length > 0 ? (
-              tasks.map((task, index) => (
-                <TaskListItem
-                  key={task.id}
-                  task={task}
-                  tasksId={tasksId}
-                  projectId={projectId}
-                  refetch={refetch}
-                  members={members}
-                />
+              tasks.map((task) => (
+                <TaskListItem key={task.id} task={task} members={members} />
               ))
             ) : (
-              <div className=" text-gray-500 text-xs">No tasks available</div>
+              <div className="text-gray-500 text-xs">No tasks available</div>
             )}
           </div>
         </SortableContext>
@@ -102,7 +85,7 @@ export default function TaskList({
           <div>
             <button
               className="btn btn-primary btn-xs shadow-none mt-2"
-              onClick={createNewTask}
+              onClick={handleCreateTask}
               disabled={loading || !newTask}
             >
               {loading ? (

@@ -1,35 +1,28 @@
 import React, { useEffect, useState } from "react";
-import request from "@/lib/request";
 import { useSession } from "@/lib/context/session";
 import moment from "moment";
 import { HiTrash } from "react-icons/hi2";
+import { useTasks } from "@/lib/context/tasks";
 
-export default function TaskCommentsModal({ taskId, projectId, onClose }) {
+export default function TaskCommentsModal({ taskId, onClose }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const { user } = useSession();
+  const { fetchComments, addComment, deleteComment } = useTasks();
 
-  const fetchComments = async () => {
-    try {
-      const { data } = await request.get(
-        `/projects/${projectId}/tasks/${taskId}/comments`
-      );
-      setComments(data?.comments);
-    } catch (error) {
-      console.error(error);
-    }
+  const loadComments = async () => {
+    const comments = await fetchComments(taskId);
+    setComments(comments);
   };
 
-  const addComment = async () => {
+  const handleAddComment = async () => {
     if (!newComment.trim()) return;
     setLoading(true);
     try {
-      await request.put(`/projects/${projectId}/tasks/${taskId}/comments`, {
-        comment: newComment,
-      });
+      await addComment(taskId, newComment);
       setNewComment("");
-      await fetchComments();
+      await loadComments();
     } catch (error) {
       console.error(error);
     } finally {
@@ -37,99 +30,76 @@ export default function TaskCommentsModal({ taskId, projectId, onClose }) {
     }
   };
 
-  const deleteComment = async (commentId) => {
+  const handleDeleteComment = async (commentId) => {
     try {
-      await request.delete(
-        `/projects/${projectId}/tasks/${taskId}/comments/${commentId}`
-      );
-      await fetchComments();
+      await deleteComment(taskId, commentId);
+      await loadComments();
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await addComment();
-  };
-
   useEffect(() => {
-    fetchComments();
-  }, [taskId, projectId]);
+    loadComments();
+  }, [taskId]);
 
   return (
-    <dialog id="task_comments_modal" className="modal modal-open">
-      <div className="modal-box w-full max-w-lg">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold">Comments</h3>
-          <form method="dialog">
-            <button
-              className="btn btn-sm btn-circle btn-ghost"
-              onClick={onClose}
-            >
-              ✕
-            </button>
-          </form>
-        </div>
-
-        <div className="max-h-[60vh] overflow-y-auto mb-4">
-          {comments.length === 0 ? (
-            <div className="text-center text-gray-500 py-4">
-              No comments yet
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {comments.map((comment) => (
-                <div key={comment.id} className="bg-base-200 rounded-lg p-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex justify-between items-center w-full">
-                      <span className="font-medium">@{comment.user}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">
-                          {moment(comment.created_at).fromNow()}
-                        </span>
-                        {comment.user === user?.username && (
-                          <button
-                            onClick={() => deleteComment(comment.id)}
-                            className="btn btn-ghost btn-xs text-error btn-circle"
-                          >
-                            <HiTrash />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm">{comment.comment}</p>
+    <div className="modal modal-open">
+      <div className="modal-box">
+        <h3 className="font-bold text-lg">Task Comments</h3>
+        <div className="py-4">
+          <div className="space-y-4 mb-4 max-h-96 overflow-auto">
+            {comments.map((comment) => (
+              <div key={comment.id} className="chat chat-start">
+                <div className="chat-header mb-1">
+                  {comment.user}{" "}
+                  <time className="text-xs opacity-50">
+                    {moment(comment.created_at).fromNow()}
+                  </time>
+                  {user?.username === comment.user && (
+                    <button
+                      className="btn btn-ghost btn-xs"
+                      onClick={() => handleDeleteComment(comment.id)}
+                    >
+                      <HiTrash className="text-error" />
+                    </button>
+                  )}
                 </div>
-              ))}
+                <div className="chat-bubble">{comment.comment}</div>
+              </div>
+            ))}
+          </div>
+          <div className="form-control">
+            <div className="input-group">
+              <input
+                type="text"
+                placeholder="Type your comment"
+                className="input input-bordered w-full"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAddComment();
+                  }
+                }}
+              />
+              <button
+                className={`btn ${loading ? "loading" : ""}`}
+                onClick={handleAddComment}
+                disabled={!newComment.trim() || loading}
+              >
+                Send
+              </button>
             </div>
-          )}
+          </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Write a comment..."
-            className="input input-bordered w-full"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={loading || !newComment.trim()}
-          >
-            {loading ? (
-              <span className="loading loading-spinner loading-sm"></span>
-            ) : (
-              "Send"
-            )}
+        <div className="modal-action">
+          <button className="btn" onClick={onClose}>
+            Close
           </button>
-        </form>
+        </div>
       </div>
-      <form method="dialog" className="modal-backdrop">
-        <button onClick={onClose}>close</button>
-      </form>
-    </dialog>
+    </div>
   );
 }
