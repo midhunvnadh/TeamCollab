@@ -39,7 +39,7 @@ const getProjectsByUserId = async (userId, projectId) => {
     const result = projectId
       ? await query(
           `
-      SELECT p.id, p.name
+      SELECT p.id, p.name, p.created_at
       FROM projects p
       JOIN user_projects_access upa ON p.id = upa.project_id
       WHERE upa.user_id = $1
@@ -49,7 +49,7 @@ const getProjectsByUserId = async (userId, projectId) => {
         )
       : await query(
           `
-      SELECT p.id, p.name
+      SELECT p.id, p.name, p.created_at
       FROM projects p
       JOIN user_projects_access upa ON p.id = upa.project_id
       WHERE upa.user_id = $1

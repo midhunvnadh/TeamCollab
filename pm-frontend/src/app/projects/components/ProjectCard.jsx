@@ -4,34 +4,37 @@ import { FaTrash } from "react-icons/fa";
 import request from "@/lib/request";
 
 export default function ProjectCard({ project, onDelete }) {
+  const createdAt = new Date(project.created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+
   return (
-    <div
-      key={project.id}
-      className="card bg-base-200 shadow-xl border-2 border-base-300"
-    >
-      <div className="card-body p-2">
-        <div className="flex items-center justify-between">
-          <h2 className="card-title">{project.name}</h2>
-          <div className="card-actions justify-end">
-            <div>
-              <Link
-                className="btn btn-primary btn-sm"
-                href={`/projects/${project.id}`}
-              >
-                View
-              </Link>
-            </div>
-            <div>
-              <button
-                onClick={async () => {
-                  await request.delete(`/projects/${project.id}`);
-                  onDelete();
-                }}
-                className="btn btn-error btn-sm shadow-none btn-square"
-              >
-                <FaTrash />
-              </button>
-            </div>
+    <div key={project.id} className="card border border-gray-300 shadow-xs">
+      <div className="card-body p-4">
+        <div className="flex flex-col space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="card-title text-lg">{project.name}</h2>
+            <div className="text-sm text-base-content/70">{createdAt}</div>
+          </div>
+          <div className="divider my-0"></div>
+          <div className="flex items-center justify-end gap-2">
+            <Link
+              className="btn btn-primary btn-sm"
+              href={`/projects/${project.id}`}
+            >
+              View Project
+            </Link>
+            <button
+              onClick={async () => {
+                await request.delete(`/projects/${project.id}`);
+                onDelete();
+              }}
+              className="btn btn-error btn-sm shadow-none btn-square text-white"
+            >
+              <FaTrash />
+            </button>
           </div>
         </div>
       </div>
