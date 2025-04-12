@@ -1,10 +1,31 @@
 import React, { useEffect } from "react";
 import TaskList from "./TaskList";
-import { DndContext } from "@dnd-kit/core";
+import {
+  DndContext,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { useTasks } from "@/lib/context/tasks";
 
 export default function TaskBoard({ members }) {
   const { tasks, fetchTasks, updateTaskStatus } = useTasks();
+
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 10,
+    },
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 200,
+      tolerance: 5,
+    },
+  });
+
+  const sensors = useSensors(mouseSensor, touchSensor);
 
   useEffect(() => {
     fetchTasks();
@@ -14,11 +35,12 @@ export default function TaskBoard({ members }) {
     const { active, over } = event;
     if (!over) return;
 
-    const activeId = active.id;
-    const overId = over.id;
+    const taskId = active.id;
+    const newStatus = over.data.current.status;
 
-    const overStatus = Number(overId.split("-")[1]);
-    updateTaskStatus(activeId, overStatus);
+    if (active.data.current.status !== newStatus) {
+      updateTaskStatus(taskId, newStatus);
+    }
   };
 
   const tasksByStatus = {
@@ -28,9 +50,9 @@ export default function TaskBoard({ members }) {
   };
 
   return (
-    <div className="lg:p-4 p-2 grow h-[calc(100svh-3.5rem)] lg:w-full w-[300vw]">
-      <DndContext onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-3 gap-4 h-full">
+    <div className="lg:p-4 p-2 grow h-[calc(100svh-3.5rem)] overflow-x-auto">
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <div className="grid grid-cols-3 lg:gap-4 gap-7 h-full lg:w-full w-[300vw]">
           <TaskList
             listname="To Do"
             tasks={tasksByStatus[0]}
