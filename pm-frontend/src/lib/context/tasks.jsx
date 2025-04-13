@@ -41,12 +41,10 @@ export function TaskProvider({ children, projectId }) {
     [projectId]
   );
 
-  // Socket event listeners
   useEffect(() => {
     if (!socket) return;
 
     socket.on("taskUpdate", ({ type, data }) => {
-      console.log("taskUpdate event received", type, data);
       if (type.startsWith("comment_")) {
         switch (type) {
           case "comment_added":
@@ -60,17 +58,52 @@ export function TaskProvider({ children, projectId }) {
             break;
           case "comment_updated":
           default:
-            fetchComments();
+            fetchComments(activeCommentTaskId);
         }
       } else {
-        fetchTasks();
+        console.log("taskUpdate event received 2", tasks, data);
+        switch (type) {
+          case "created":
+            setTasks((prevTasks) => [
+              {
+                id: data.taskId,
+                title: data.taskName,
+                status: data.status,
+                assigned_to_user: data.assignTo,
+                created_at: new Date().toISOString(),
+              },
+              ...prevTasks,
+            ]);
+            break;
+          case "updated":
+            setTasks((prevTasks) =>
+              prevTasks.map((task) =>
+                +task.id === +data.taskId
+                  ? {
+                      ...task,
+                      title: data.name || task.title,
+                      status: data.status ?? task.status,
+                      assigned_to_user: data.assignTo || task.assigned_to_user,
+                    }
+                  : task
+              )
+            );
+            break;
+          case "deleted":
+            setTasks((prevTasks) =>
+              prevTasks.filter((task) => +task.id !== +data.taskId)
+            );
+            break;
+          default:
+            console.warn("Unknown task update type:", type);
+        }
       }
     });
 
     return () => {
       socket.off("taskUpdate");
     };
-  }, [socket, activeCommentTaskId, fetchComments, fetchTasks]);
+  }, [socket, activeCommentTaskId, fetchComments]);
 
   const createTask = useCallback(
     async (name, status, assignTo = null) => {
@@ -81,9 +114,6 @@ export function TaskProvider({ children, projectId }) {
           status,
           assignTo,
         });
-        if (data) {
-          await fetchTasks();
-        }
         return data;
       } catch (error) {
         console.error("Error creating task:", error);
@@ -91,7 +121,7 @@ export function TaskProvider({ children, projectId }) {
         setLoading(false);
       }
     },
-    [projectId, fetchTasks]
+    [projectId]
   );
 
   const updateTaskStatus = useCallback(
@@ -123,14 +153,13 @@ export function TaskProvider({ children, projectId }) {
     async (taskId) => {
       try {
         await request.delete(`/projects/${projectId}/tasks/${taskId}`);
-        await fetchTasks();
         return true;
       } catch (error) {
         console.error("Error deleting task:", error);
         return false;
       }
     },
-    [projectId, fetchTasks]
+    [projectId]
   );
 
   const assignTask = useCallback(
@@ -145,14 +174,13 @@ export function TaskProvider({ children, projectId }) {
         if (!data.success) {
           throw new Error(data.message);
         }
-        await fetchTasks();
         return true;
       } catch (error) {
         console.error("Error assigning task:", error);
         return false;
       }
     },
-    [projectId, fetchTasks]
+    [projectId]
   );
 
   // Team management
