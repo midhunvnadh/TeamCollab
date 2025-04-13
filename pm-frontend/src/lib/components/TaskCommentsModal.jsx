@@ -8,7 +8,13 @@ import { useSocket } from "../context/socket";
 export default function TaskCommentsModal({ taskId, onClose }) {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
-  const { comments, addComment, deleteComment, fetchComments } = useTasks();
+  const {
+    comments,
+    addComment,
+    deleteComment,
+    fetchComments,
+    setActiveCommentTaskId,
+  } = useTasks();
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
@@ -35,6 +41,7 @@ export default function TaskCommentsModal({ taskId, onClose }) {
   };
 
   useEffect(() => {
+    setActiveCommentTaskId(taskId);
     fetchComments(taskId);
   }, []);
 
