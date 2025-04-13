@@ -2,7 +2,7 @@
 import SessionProvider from "@/lib/context/session";
 import "./globals.css";
 import { geistMono, geistSans } from "@/lib/fonts";
-import Head from "next/head";
+import { SocketProvider } from "@/lib/context/socket";
 
 export default function RootLayout({ children }) {
   return (
@@ -17,7 +17,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>{children}</SessionProvider>
+        <SocketProvider>
+          <SessionProvider>{children}</SessionProvider>
+        </SocketProvider>
       </body>
     </html>
   );

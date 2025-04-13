@@ -3,10 +3,12 @@ import Link from "next/link";
 import React from "react";
 import { FaBell, FaDotCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
+import { useSocket } from "@/lib/context/socket";
 
 export default function NotificationsDrawer({ open, close }) {
   const [notifications, setNotifications] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const socket = useSocket();
 
   const fetchNotifications = async () => {
     try {
@@ -25,6 +27,18 @@ export default function NotificationsDrawer({ open, close }) {
       fetchNotifications();
     }
   }, [open]);
+
+  React.useEffect(() => {
+    if (!socket) return;
+
+    socket.on("notification", ({ type, data }) => {
+      fetchNotifications();
+    });
+
+    return () => {
+      socket.off("notification");
+    };
+  }, [socket]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);

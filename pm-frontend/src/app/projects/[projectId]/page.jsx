@@ -42,7 +42,6 @@ export default function page({ params }) {
   const refetch = () => {
     fetchProjectDetails();
   };
-
   return (
     <div className="min-h-svh">
       <TaskProvider projectId={projectId}>

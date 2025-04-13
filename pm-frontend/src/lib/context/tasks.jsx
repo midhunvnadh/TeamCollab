@@ -1,11 +1,19 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import request from "../request";
+import { useSocket } from "./socket";
 
 const TaskContext = createContext({});
 
 export function TaskProvider({ children, projectId }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const socket = useSocket();
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -15,6 +23,20 @@ export function TaskProvider({ children, projectId }) {
       console.error("Error fetching tasks:", error);
     }
   }, [projectId]);
+
+  // Socket event listeners
+  useEffect(() => {
+    if (!socket) return;
+
+    // Listen for task updates
+    socket.on("taskUpdate", ({ type, data }) => {
+      fetchTasks();
+    });
+
+    return () => {
+      socket.off("taskUpdate");
+    };
+  }, [socket, projectId, fetchTasks]);
 
   const createTask = useCallback(
     async (name, status, assignTo = null) => {
@@ -54,9 +76,10 @@ export function TaskProvider({ children, projectId }) {
         await request.patch(`/projects/${projectId}/tasks/${taskId}`, {
           status: newStatus,
         });
-        await fetchTasks();
       } catch (error) {
         console.error("Error updating task status:", error);
+        // Revert optimistic update on error
+        await fetchTasks();
       }
     },
     [projectId, fetchTasks]
