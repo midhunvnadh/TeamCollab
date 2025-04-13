@@ -16,12 +16,6 @@ const notificationsController = async (req, res) => {
         .json({ success: false, message: "No notifications found" });
     }
 
-    // Emit notification event
-    // socketUtil.emitNotification("tasks_updated", {
-    //   userId: user.id,
-    //   tasks,
-    // });
-
     return res.status(200).json({
       success: true,
       message: "Notifications fetched successfully",

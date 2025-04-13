@@ -48,7 +48,7 @@ export default function ViewProjectTeamModal({
     fetchMembers();
   };
 
-  const isTheLoggedInUserAdmin = members.find(
+  const isTheLoggedInUserAdmin = members?.find(
     (member) => member.username === user?.username
   )?.admin;
 

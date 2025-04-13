@@ -32,7 +32,20 @@ export default function NotificationsDrawer({ open, close }) {
     if (!socket) return;
 
     socket.on("notification", ({ type, data }) => {
-      fetchNotifications();
+      if (type === "task_assigned") {
+        setNotifications((prev) => [
+          {
+            id: data.taskId,
+            title: data.taskName,
+            project_id: data.projectId,
+            created_at: new Date().toISOString(),
+            type: "task_assigned",
+          },
+          ...prev,
+        ]);
+      } else {
+        fetchNotifications();
+      }
     });
 
     return () => {
@@ -95,7 +108,7 @@ export default function NotificationsDrawer({ open, close }) {
                 notifications?.map((n) => (
                   <Link
                     href={`/projects/${n.project_id}`}
-                    key={n.created_at}
+                    key={n.id + n.created_at}
                     className="card bg-base-100 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer border border-base-300"
                   >
                     <div className="card-body p-4">
@@ -103,10 +116,14 @@ export default function NotificationsDrawer({ open, close }) {
                         <div className="w-2 h-2 rounded-full bg-info mt-2 flex-shrink-0" />
                         <div className="space-y-1 flex-grow">
                           <p className="font-medium">
-                            New task assigned: "{n.title}"
+                            {n.type === "task_assigned" ? (
+                              <>Task assigned: "{n.title}"</>
+                            ) : (
+                              <>New task assigned: "{n.title}"</>
+                            )}
                           </p>
                           <p className="text-sm text-base-content/70">
-                            Project: {n.project_name}
+                            Project: {n.project_name || "Loading..."}
                           </p>
                           <p className="text-xs text-base-content/60 capitalize">
                             {formatDate(n.created_at)}

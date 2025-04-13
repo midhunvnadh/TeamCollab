@@ -53,7 +53,6 @@ const getTasksByUserId = async (userId) => {
     FROM tasks
     JOIN projects ON tasks.project_id = projects.id
     WHERE assigned_to_user = $1
-    AND status = 0
     ORDER BY created_at DESC
   `,
     [userId]

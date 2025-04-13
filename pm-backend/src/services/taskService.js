@@ -24,6 +24,17 @@ const createTaskService = async (
         assignTo,
         status,
       });
+
+      // Emit notification if task is created with an assignee
+      if (assignTo) {
+        socketUtil.emitNotification("task_assigned", {
+          taskId: task.taskId,
+          assignedUserId: assignTo,
+          taskName,
+          projectId,
+        });
+      }
+
       return { success: true, taskId: task.taskId };
     } else {
       throw new Error("Failed to create task");
@@ -76,6 +87,17 @@ const editTaskService = async (taskId, name, assignTo, status) => {
         assignTo: assignTo || t.assigned_to_user,
         status: status === undefined ? t.status : status,
       });
+
+      // Emit notification if task is assigned to someone
+      if (assignTo && assignTo !== t.assigned_to_user) {
+        socketUtil.emitNotification("task_assigned", {
+          taskId,
+          assignedUserId: assignTo,
+          taskName: name || t.title,
+          projectId: t.project_id,
+        });
+      }
+
       return task;
     } else {
       throw new Error("Task not found");

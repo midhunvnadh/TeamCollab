@@ -4,18 +4,15 @@ import { useTasks } from "@/lib/context/tasks";
 
 export default function CreateTaskForm({ tasksId, members }) {
   const [newTask, setNewTask] = useState("");
-  const [assignToMe, setAssignToMe] = useState(false);
+  const [assignedUser, setAssignedUser] = useState("");
   const { loading, createTask } = useTasks();
   const { user } = useSession();
 
   const handleCreateTask = async () => {
-    const result = await createTask(
-      newTask,
-      tasksId,
-      assignToMe ? user?.id : null
-    );
+    const result = await createTask(newTask, tasksId, assignedUser || null);
     if (result) {
       setNewTask("");
+      setAssignedUser("");
     }
   };
 
@@ -30,19 +27,19 @@ export default function CreateTaskForm({ tasksId, members }) {
         }}
       ></textarea>
       <div className="flex justify-between items-end">
-        <div className="space-x-2">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-xs"
-            checked={assignToMe}
-            id={`${tasksId}-cb`}
-            onChange={() => {
-              setAssignToMe(!assignToMe);
-            }}
-          />
-          <label htmlFor={`${tasksId}-cb`}>
-            <span className="text-xs">Assign to Me</span>
-          </label>
+        <div className="space-y-2">
+          <select
+            value={assignedUser || ""}
+            onChange={(e) => setAssignedUser(e.target.value)}
+            className="select select-bordered select-xs w-full"
+          >
+            <option value="">Unassigned</option>
+            {members?.map((m) => (
+              <option key={m.id} value={m.id}>
+                @{m.username}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <button
