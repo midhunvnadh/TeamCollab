@@ -6,6 +6,7 @@ const {
   deleteTask,
   getTasksByUserId,
 } = require("../repository/tasks");
+const socketUtil = require("../lib/socket");
 
 const createTaskService = async (
   projectId,
@@ -16,6 +17,13 @@ const createTaskService = async (
   try {
     const task = await createTask(projectId, taskName, assignTo, status);
     if (task.success) {
+      socketUtil.emitTaskUpdate("created", {
+        taskId: task.taskId,
+        projectId,
+        taskName,
+        assignTo,
+        status,
+      });
       return { success: true, taskId: task.taskId };
     } else {
       throw new Error("Failed to create task");
@@ -62,6 +70,12 @@ const editTaskService = async (taskId, name, assignTo, status) => {
       status === undefined ? t.status : status
     );
     if (task) {
+      socketUtil.emitTaskUpdate("updated", {
+        taskId,
+        name: name || t.title,
+        assignTo: assignTo || t.assigned_to_user,
+        status: status === undefined ? t.status : status,
+      });
       return task;
     } else {
       throw new Error("Task not found");
@@ -79,6 +93,7 @@ const deleteTaskService = async (taskId) => {
     }
     const result = await deleteTask(taskId);
     if (result) {
+      socketUtil.emitTaskUpdate("deleted", { taskId });
       return { success: true };
     } else {
       throw new Error("Failed to delete task");
