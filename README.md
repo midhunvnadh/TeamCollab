@@ -11,6 +11,7 @@ http://localhost:3000
 
 1. Refresh tokens are not implemented.
 2. Tests are not written.
+3. Please note that implementations are moderately basic.
 
 # Deliverables
 
