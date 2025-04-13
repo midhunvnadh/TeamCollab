@@ -32,7 +32,7 @@ export function TaskProvider({ children, projectId }) {
         const { data } = await request.get(
           `/projects/${projectId}/tasks/${taskId}/comments`
         );
-        setComments(data?.comments);
+        setComments(data?.comments || []);
       } catch (error) {
         console.error("Error fetching comments:", error);
         return [];

@@ -8,7 +8,7 @@ export default function CommentList({ comments, onDeleteComment }) {
 
   return (
     <div className="space-y-4 mb-4 max-h-96 overflow-auto">
-      {comments.map((comment) => {
+      {comments?.map((comment) => {
         const isMe = user?.id === comment.user_id;
         return (
           <div
@@ -33,7 +33,7 @@ export default function CommentList({ comments, onDeleteComment }) {
           </div>
         );
       })}
-      {comments.length === 0 && (
+      {comments?.length === 0 && (
         <div className="text-xs text-gray-600">
           No comments yet. Be the first to comment!
         </div>
