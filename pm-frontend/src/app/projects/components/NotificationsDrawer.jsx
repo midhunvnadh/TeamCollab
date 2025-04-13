@@ -8,7 +8,7 @@ import { useSocket } from "@/lib/context/socket";
 export default function NotificationsDrawer({ open, close }) {
   const [notifications, setNotifications] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const socket = useSocket();
+  const { socket } = useSocket();
 
   const fetchNotifications = async () => {
     try {

@@ -17,10 +17,10 @@ const notificationsController = async (req, res) => {
     }
 
     // Emit notification event
-    socketUtil.emitNotification("tasks_updated", {
-      userId: user.id,
-      tasks,
-    });
+    // socketUtil.emitNotification("tasks_updated", {
+    //   userId: user.id,
+    //   tasks,
+    // });
 
     return res.status(200).json({
       success: true,

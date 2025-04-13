@@ -13,7 +13,9 @@ const TaskContext = createContext({});
 export function TaskProvider({ children, projectId }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
-  const socket = useSocket();
+  const [activeCommentTaskId, setActiveCommentTaskId] = useState(null);
+  const [comments, setComments] = useState([]);
+  const { socket } = useSocket();
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -24,19 +26,51 @@ export function TaskProvider({ children, projectId }) {
     }
   }, [projectId]);
 
+  const fetchComments = useCallback(
+    async (taskId) => {
+      try {
+        const { data } = await request.get(
+          `/projects/${projectId}/tasks/${taskId}/comments`
+        );
+        setComments(data?.comments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+        return [];
+      }
+    },
+    [projectId]
+  );
+
   // Socket event listeners
   useEffect(() => {
     if (!socket) return;
 
-    // Listen for task updates
     socket.on("taskUpdate", ({ type, data }) => {
-      fetchTasks();
+      console.log("taskUpdate event received", type, data);
+      if (type.startsWith("comment_")) {
+        switch (type) {
+          case "comment_added":
+            console.log("Setting new comment");
+            setComments((prevComments) => [...prevComments, data.comment]);
+            break;
+          case "comment_deleted":
+            setComments((prevComments) =>
+              prevComments.filter((comment) => +comment.id !== +data.commentId)
+            );
+            break;
+          case "comment_updated":
+          default:
+            fetchComments();
+        }
+      } else {
+        fetchTasks();
+      }
     });
 
     return () => {
       socket.off("taskUpdate");
     };
-  }, [socket, projectId, fetchTasks]);
+  }, [socket, activeCommentTaskId, fetchComments, fetchTasks]);
 
   const createTask = useCallback(
     async (name, status, assignTo = null) => {
@@ -121,52 +155,6 @@ export function TaskProvider({ children, projectId }) {
     [projectId, fetchTasks]
   );
 
-  // Comments management
-  const fetchComments = useCallback(
-    async (taskId) => {
-      try {
-        const { data } = await request.get(
-          `/projects/${projectId}/tasks/${taskId}/comments`
-        );
-        return data?.comments || [];
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-        return [];
-      }
-    },
-    [projectId]
-  );
-
-  const addComment = useCallback(
-    async (taskId, comment) => {
-      try {
-        await request.put(`/projects/${projectId}/tasks/${taskId}/comments`, {
-          comment,
-        });
-        return true;
-      } catch (error) {
-        console.error("Error adding comment:", error);
-        return false;
-      }
-    },
-    [projectId]
-  );
-
-  const deleteComment = useCallback(
-    async (taskId, commentId) => {
-      try {
-        await request.delete(
-          `/projects/${projectId}/tasks/${taskId}/comments/${commentId}`
-        );
-        return true;
-      } catch (error) {
-        console.error("Error deleting comment:", error);
-        return false;
-      }
-    },
-    [projectId]
-  );
-
   // Team management
   const setMemberAdmin = useCallback(
     async (username, admin) => {
@@ -216,11 +204,42 @@ export function TaskProvider({ children, projectId }) {
     [projectId]
   );
 
+  const addComment = useCallback(
+    async (taskId, comment) => {
+      try {
+        await request.put(`/projects/${projectId}/tasks/${taskId}/comments`, {
+          comment,
+        });
+        return true;
+      } catch (error) {
+        console.error("Error adding comment:", error);
+        return false;
+      }
+    },
+    [projectId]
+  );
+
+  const deleteComment = useCallback(
+    async (taskId, commentId) => {
+      try {
+        await request.delete(
+          `/projects/${projectId}/tasks/${taskId}/comments/${commentId}`
+        );
+        return true;
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+        return false;
+      }
+    },
+    [projectId]
+  );
+
   return (
     <TaskContext.Provider
       value={{
         tasks,
         loading,
+        comments,
         fetchTasks,
         createTask,
         updateTaskStatus,
@@ -232,6 +251,8 @@ export function TaskProvider({ children, projectId }) {
         setMemberAdmin,
         deleteMember,
         addMember,
+        activeCommentTaskId,
+        setActiveCommentTaskId,
       }}
     >
       {children}

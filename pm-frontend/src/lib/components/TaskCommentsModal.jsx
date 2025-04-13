@@ -3,17 +3,12 @@ import { HiXMark } from "react-icons/hi2";
 import { useTasks } from "@/lib/context/tasks";
 import CommentList from "./CommentList";
 import CommentInput from "./CommentInput";
+import { useSocket } from "../context/socket";
 
 export default function TaskCommentsModal({ taskId, onClose }) {
-  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
-  const { fetchComments, addComment, deleteComment } = useTasks();
-
-  const loadComments = async () => {
-    const comments = await fetchComments(taskId);
-    setComments(comments);
-  };
+  const { comments, addComment, deleteComment, fetchComments } = useTasks();
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
@@ -21,7 +16,6 @@ export default function TaskCommentsModal({ taskId, onClose }) {
     try {
       await addComment(taskId, newComment);
       setNewComment("");
-      await loadComments();
     } catch (error) {
       console.error(error);
     } finally {
@@ -35,15 +29,14 @@ export default function TaskCommentsModal({ taskId, onClose }) {
     }
     try {
       await deleteComment(taskId, commentId);
-      await loadComments();
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    loadComments();
-  }, [taskId]);
+    fetchComments(taskId);
+  }, []);
 
   return (
     <div className="modal modal-open">

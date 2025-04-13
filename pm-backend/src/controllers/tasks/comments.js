@@ -1,44 +1,40 @@
 const {
-  addComment,
-  fetchComments,
-  updateComment,
-  removeComment,
-} = require("../../repository/taskComments");
+  createComment,
+  getComments,
+  editComment,
+  deleteComment,
+} = require("../../services/taskCommentsService");
 
-const createComment = async (req, res) => {
+const createCommentHandler = async (req, res) => {
   const { taskId } = req.params;
   const userId = req?.user?.id;
   const { comment } = req.body;
 
   if (!taskId || !userId || !comment) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Task ID, user ID, and comment are required",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Task ID, user ID, and comment are required",
+    });
   }
 
   try {
-    const newComment = await addComment(taskId, userId, comment);
+    const newComment = await createComment(taskId, userId, comment);
     if (!newComment) {
       return res
         .status(500)
         .json({ success: false, message: "Failed to add comment" });
     }
-    return res
-      .status(201)
-      .json({
-        success: true,
-        message: "Comment added successfully",
-        comment: newComment,
-      });
+    return res.status(201).json({
+      success: true,
+      message: "Comment added successfully",
+      comment: newComment,
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-const getComments = async (req, res) => {
+const getCommentsHandler = async (req, res) => {
   const { taskId } = req.params;
 
   if (!taskId) {
@@ -48,58 +44,52 @@ const getComments = async (req, res) => {
   }
 
   try {
-    const comments = await fetchComments(taskId);
+    const comments = await getComments(taskId);
     if (!comments || comments.length === 0) {
       return res
         .status(404)
         .json({ success: false, message: "No comments found" });
     }
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Comments fetched successfully",
-        comments,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Comments fetched successfully",
+      comments,
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-const editComment = async (req, res) => {
-  const { commentId } = req.params;
+const editCommentHandler = async (req, res) => {
+  const { commentId, taskId } = req.params;
   const { comment } = req.body;
 
   if (!commentId || !comment) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Comment ID and updated comment are required",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Comment ID and updated comment are required",
+    });
   }
 
   try {
-    const updatedComment = await updateComment(commentId, comment);
+    const updatedComment = await editComment(commentId, comment);
     if (!updatedComment) {
       return res
         .status(404)
         .json({ success: false, message: "Comment not found" });
     }
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Comment updated successfully",
-        comment: updatedComment,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Comment updated successfully",
+      comment: updatedComment,
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-const deleteComment = async (req, res) => {
-  const { commentId } = req.params;
+const deleteCommentHandler = async (req, res) => {
+  const { commentId, taskId } = req.params;
 
   if (!commentId) {
     return res
@@ -108,27 +98,25 @@ const deleteComment = async (req, res) => {
   }
 
   try {
-    const deletedComment = await removeComment(commentId);
+    const deletedComment = await deleteComment(commentId, taskId);
     if (!deletedComment) {
       return res
         .status(404)
         .json({ success: false, message: "Comment not found" });
     }
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Comment deleted successfully",
-        comment: deletedComment,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Comment deleted successfully",
+      comment: deletedComment,
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
 module.exports = {
-  createComment,
-  getComments,
-  editComment,
-  deleteComment,
+  createComment: createCommentHandler,
+  getComments: getCommentsHandler,
+  editComment: editCommentHandler,
+  deleteComment: deleteCommentHandler,
 };

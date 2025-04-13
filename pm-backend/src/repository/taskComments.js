@@ -8,12 +8,12 @@ const addComment = async (taskId, userId, comment) => {
   `;
   const values = [taskId, userId, comment];
   const result = await db.query(query, values);
-  return result.length > 0;
+  return result[0];
 };
 
 const fetchComments = async (taskId) => {
   const query = `
-    SELECT tc.id, tc.comment, tc.created_at, u.username AS user
+    SELECT tc.id, tc.comment, tc.created_at, u.username AS username, u.id AS user_id
     FROM public.task_comments tc
     JOIN public.users u ON tc.user_id = u.id
     WHERE tc.task_id = $1
