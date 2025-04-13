@@ -65,6 +65,9 @@ export function TaskProvider({ children, projectId }) {
           }
         }
       } else {
+        if (+data.projectId !== +projectId) {
+          return;
+        }
         console.log("taskUpdate event received 2", tasks, data);
         switch (type) {
           case "created":
