@@ -46,19 +46,23 @@ export function TaskProvider({ children, projectId }) {
 
     socket.on("taskUpdate", ({ type, data }) => {
       if (type.startsWith("comment_")) {
-        switch (type) {
-          case "comment_added":
-            console.log("Setting new comment");
-            setComments((prevComments) => [...prevComments, data.comment]);
-            break;
-          case "comment_deleted":
-            setComments((prevComments) =>
-              prevComments.filter((comment) => +comment.id !== +data.commentId)
-            );
-            break;
-          case "comment_updated":
-          default:
-            fetchComments(activeCommentTaskId);
+        // Only update comments if they are for the active task
+        if (activeCommentTaskId && +data.taskId === +activeCommentTaskId) {
+          switch (type) {
+            case "comment_added":
+              setComments((prevComments) => [...prevComments, data.comment]);
+              break;
+            case "comment_deleted":
+              setComments((prevComments) =>
+                prevComments.filter(
+                  (comment) => +comment.id !== +data.commentId
+                )
+              );
+              break;
+            case "comment_updated":
+            default:
+              fetchComments(activeCommentTaskId);
+          }
         }
       } else {
         console.log("taskUpdate event received 2", tasks, data);
